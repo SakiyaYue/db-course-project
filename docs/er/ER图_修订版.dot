@@ -1,0 +1,38 @@
+digraph ER {
+graph [rankdir=LR, splines=spline, nodesep=0.5, ranksep=1.0, pad=0.28, bgcolor="white", fontname="Microsoft YaHei"];
+node [shape=box, style="rounded,filled", fontname="Microsoft YaHei", fontsize=12, margin="0.18,0.14"];
+edge [fontname="Microsoft YaHei", fontsize=10, color="#64748b", fontcolor="#475569", penwidth=1.15, dir=none, labeldistance=1.7, labelangle=24];
+Employee [label="员工\nEmployee\n────────────────────\nPK  employee_id\nname\nstatus\nsalary\nrole\n────────────────────\nsalary：元／月\nrole：店员／店长", fillcolor="#f0fdfa", color="#0f766e", fontcolor="#0f172a"];
+DutyRoster [label="值班表\nDutyRoster\n────────────────────\nPK  duty_id\nFK  employee_id\nstart_time\nend_time\n────────────────────\nUK(employee_id, start_time)\nstart_time < end_time", fillcolor="#f0fdfa", color="#0f766e", fontcolor="#0f172a"];
+Product [label="商品\nProduct\n────────────────────\nPK  product_id\nproduct_name\nbase_price\nstatus\ndescription ?", fillcolor="#f6f5ff", color="#6d28d9", fontcolor="#0f172a"];
+Recipe [label="基础配方\nRecipe\n────────────────────\nPK/FK  product_id\nPK/FK  ingredient_id\nbase_amount", fillcolor="#f6f5ff", color="#6d28d9", fontcolor="#0f172a"];
+Ingredient [label="原料与库存\nIngredient\n────────────────────\nPK  ingredient_id\ningredient_name\nunit\nstock\nstatus", fillcolor="#f6f5ff", color="#6d28d9", fontcolor="#0f172a"];
+Specification [label="规格\nSpecification\n────────────────────\nPK  spec_id\nspec_type\nspec_name\n────────────────────\n温度／糖度／杯型\nUK(spec_type, spec_name)\nUK(spec_id, spec_type)\n后者供复合外键引用", fillcolor="#f6f5ff", color="#6d28d9", fontcolor="#0f172a"];
+ProductSpecification [label="商品规格配置表\nProductSpecification\n────────────────────\nPK/FK  product_id\nPK/FK  spec_id\nprice_delta\nstatus\n────────────────────\n商品可选规格＋每杯加价", fillcolor="#f6f5ff", color="#6d28d9", fontcolor="#0f172a"];
+SpecificationIngredient [label="商品规格原料系数表\nSpecificationIngredient\n────────────────────\nPK/FK  product_id\nPK/FK  spec_id\nPK/FK  ingredient_id\nfactor\n────────────────────\n仅系数调整\n同原料多规格系数相乘", fillcolor="#f6f5ff", color="#6d28d9", fontcolor="#0f172a"];
+AddOn [label="加料\nAddOn\n────────────────────\nPK  addon_id\nUK  addon_name\nprice\nFK  ingredient_id\nextra_amount\nstatus\n────────────────────\n一种加料对应一种原料\nprice／extra_amount 按一份\n库存存放在 Ingredient", fillcolor="#f6f5ff", color="#6d28d9", fontcolor="#0f172a"];
+Member [label="会员\nMember\n────────────────────\nPK  member_id\nname\nUK  phone\npoints", fillcolor="#eff6ff", color="#1d4ed8", fontcolor="#0f172a"];
+SalesOrder [label="正式订单\nSalesOrder\n────────────────────\nPK  order_id\nFK  member_id ?\norder_time\ntotal_amount\nstatus\n────────────────────\nmember_id 可空；不存单一员工\n外键", fillcolor="#eff6ff", color="#1d4ed8", fontcolor="#0f172a"];
+OrderItem [label="订单明细\nOrderItem\n────────────────────\nPK  item_id\nFK  order_id\nFK  product_id\nproduct_name_snapshot\nquantity\nbase_price_snapshot\nunit_price\nsub_amount\n────────────────────\nunit_price 含规格加价和加料\nsub_amount =\nunit_price × quantity", fillcolor="#eff6ff", color="#1d4ed8", fontcolor="#0f172a"];
+ItemSpec [label="明细规格选择\nItemSpec\n────────────────────\nPK/FK  item_id\nPK/FK  spec_type\nFK  spec_id\nspec_name_snapshot\nprice_delta_snapshot\n────────────────────\n每种类型最多一个；共最多三种\n复合 FK(spec_id, spec_type)", fillcolor="#eff6ff", color="#1d4ed8", fontcolor="#0f172a"];
+ItemAddOn [label="明细加料选择\nItemAddOn\n────────────────────\nPK/FK  item_id\nPK/FK  addon_id\naddon_name_snapshot\nprice_snapshot\n────────────────────\n每杯同一种加料最多一份\n总份数 = OrderItem.quantity\n不另设加料数量字段", fillcolor="#eff6ff", color="#1d4ed8", fontcolor="#0f172a"];
+OrderItemIngredient [label="原料消耗快照\nOrderItemIngredient\n────────────────────\nPK/FK  item_id\nPK/FK  ingredient_id\namount\n────────────────────\namount 为全部杯数的实际扣减\n量", fillcolor="#eff6ff", color="#1d4ed8", fontcolor="#0f172a"];
+Member -> SalesOrder [taillabel="0..1", headlabel="0..N", label="会员可选"];
+Employee -> DutyRoster [taillabel="1", headlabel="0..N", label=""];
+SalesOrder -> OrderItem [taillabel="1", headlabel="1..N", label=""];
+Product -> OrderItem [taillabel="1", headlabel="0..N", label=""];
+Product -> Recipe [taillabel="1", headlabel="0..N", label=""];
+Ingredient -> Recipe [taillabel="1", headlabel="0..N", label=""];
+Product -> ProductSpecification [taillabel="1", headlabel="0..N", label=""];
+Specification -> ProductSpecification [taillabel="1", headlabel="0..N", label=""];
+ProductSpecification -> SpecificationIngredient [taillabel="1", headlabel="0..N", label="复合外键"];
+Ingredient -> SpecificationIngredient [taillabel="1", headlabel="0..N", label=""];
+Ingredient -> AddOn [taillabel="1", headlabel="0..N", label=""];
+OrderItem -> ItemSpec [taillabel="1", headlabel="0..3", label=""];
+Specification -> ItemSpec [taillabel="1", headlabel="0..N", label="复合外键"];
+OrderItem -> ItemAddOn [taillabel="1", headlabel="0..N", label=""];
+AddOn -> ItemAddOn [taillabel="1", headlabel="0..N", label=""];
+OrderItem -> OrderItemIngredient [taillabel="1", headlabel="1..N", label=""];
+Ingredient -> OrderItemIngredient [taillabel="1", headlabel="0..N", label=""];
+SalesOrder -> DutyRoster [style=dashed, color="#c2410c", fontcolor="#9a3412", penwidth=1.8, constraint=false, label="按订单时间匹配 M:N\n非外键关系"];
+}
