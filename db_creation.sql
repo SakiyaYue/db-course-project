@@ -26,6 +26,12 @@ CREATE TABLE Employee (
     CONSTRAINT PK_Employee
         PRIMARY KEY (employee_id),
 
+    CONSTRAINT CK_Employee_Id_NotBlank
+        CHECK (LEN(LTRIM(RTRIM(employee_id))) > 0),
+
+    CONSTRAINT CK_Employee_Name_NotBlank
+        CHECK (LEN(LTRIM(RTRIM(name))) > 0),
+
     CONSTRAINT CK_Employee_Status
         CHECK (status IN (N'在职', N'离职')),
 
@@ -69,8 +75,19 @@ CREATE TABLE Member (
     CONSTRAINT PK_Member
         PRIMARY KEY (member_id),
 
+    CONSTRAINT CK_Member_Id_NotBlank
+        CHECK (LEN(LTRIM(RTRIM(member_id))) > 0),
+
+    CONSTRAINT CK_Member_Name_NotBlank
+        CHECK (LEN(LTRIM(RTRIM(name))) > 0),
+
     CONSTRAINT UK_Member_Phone
         UNIQUE (phone),
+
+    CONSTRAINT CK_Member_Phone_Format
+        CHECK (DATALENGTH(phone) = 11
+            AND phone LIKE '1%'
+            AND phone COLLATE Latin1_General_100_BIN2 NOT LIKE '%[^0-9]%'),
 
     CONSTRAINT CK_Member_Points
         CHECK (points >= 0)
@@ -83,10 +100,13 @@ CREATE TABLE SalesOrder (
     member_id VARCHAR(10) NULL,
     order_time DATETIME2(0) NOT NULL DEFAULT SYSDATETIME(),
     total_amount DECIMAL(10, 2) NOT NULL,
-    status NVARCHAR(20) NOT NULL DEFAULT N'排队中', -- 排队中/制作中/已完成/已取消
+    status NVARCHAR(20) NOT NULL DEFAULT N'排队中', -- 排队中/制作中/待取餐/已完成/已取消
 
     CONSTRAINT PK_SalesOrder
         PRIMARY KEY (order_id),
+
+    CONSTRAINT CK_SalesOrder_Id_NotBlank
+        CHECK (LEN(LTRIM(RTRIM(order_id))) > 0),
 
     CONSTRAINT FK_SalesOrder_Member
         FOREIGN KEY (member_id)
@@ -96,7 +116,7 @@ CREATE TABLE SalesOrder (
         CHECK (total_amount >= 0),
 
     CONSTRAINT CK_SalesOrder_status
-        CHECK (status IN (N'排队中', N'制作中', N'已完成', N'已取消'))
+        CHECK (status IN (N'排队中', N'制作中', N'待取餐', N'已完成', N'已取消'))
 );
 GO
 
@@ -105,11 +125,17 @@ CREATE TABLE Product (
 	product_id VARCHAR(10) NOT NULL,
 	product_name NVARCHAR(50) NOT NULL,
 	base_price DECIMAL(10, 2) NOT NULL,
-	status NVARCHAR(10) NOT NULL DEFAULT N'在售', -- 在售/下架
+	status NVARCHAR(10) NOT NULL DEFAULT N'下架', -- 在售/下架
 	description NVARCHAR(200) NULL,
 
     CONSTRAINT PK_Product
         PRIMARY KEY (product_id),
+
+    CONSTRAINT CK_Product_Id_NotBlank
+        CHECK (LEN(LTRIM(RTRIM(product_id))) > 0),
+
+    CONSTRAINT CK_Product_Name_NotBlank
+        CHECK (LEN(LTRIM(RTRIM(product_name))) > 0),
         
 	CONSTRAINT CK_Product_Price
         CHECK (base_price >= 0),
@@ -127,6 +153,12 @@ CREATE TABLE Specification (
 
     CONSTRAINT PK_Specification
         PRIMARY KEY (spec_id),
+
+    CONSTRAINT CK_Specification_Id_NotBlank
+        CHECK (LEN(LTRIM(RTRIM(spec_id))) > 0),
+
+    CONSTRAINT CK_Specification_Name_NotBlank
+        CHECK (LEN(LTRIM(RTRIM(spec_name))) > 0),
 
     CONSTRAINT UK_Specification_typename
         UNIQUE (spec_type, spec_name),
@@ -150,6 +182,12 @@ CREATE TABLE Ingredient (
     CONSTRAINT PK_Ingredient
         PRIMARY KEY (ingredient_id),
 
+    CONSTRAINT CK_Ingredient_Id_NotBlank
+        CHECK (LEN(LTRIM(RTRIM(ingredient_id))) > 0),
+
+    CONSTRAINT CK_Ingredient_Name_NotBlank
+        CHECK (LEN(LTRIM(RTRIM(ingredient_name))) > 0),
+
     CONSTRAINT CK_Ingredient_Stock
         CHECK (stock >= 0),
 
@@ -167,13 +205,16 @@ CREATE TABLE OrderItem (
     order_id VARCHAR(10) NOT NULL,
     product_id VARCHAR(10) NOT NULL,
     product_name_snapshot NVARCHAR(50) NOT NULL,
-    quantity INT NOT NULL,
+    quantity INT NOT NULL DEFAULT 1,
     base_price_snapshot DECIMAL(10, 2) NOT NULL,
     unit_price DECIMAL(10, 2) NOT NULL,
     sub_amount DECIMAL(10, 2) NOT NULL,
 
     CONSTRAINT PK_OrderItem
         PRIMARY KEY (item_id),
+
+    CONSTRAINT CK_OrderItem_ProductName_NotBlank
+        CHECK (LEN(LTRIM(RTRIM(product_name_snapshot))) > 0),
 
     CONSTRAINT FK_OrderItem_Order
         FOREIGN KEY (order_id)
@@ -201,8 +242,8 @@ GO
 CREATE TABLE ProductSpecification (
     product_id VARCHAR(10) NOT NULL,
     spec_id VARCHAR(10) NOT NULL,
-    price_delta DECIMAL(10, 2) NOT NULL,
-    status NVARCHAR(10) NOT NULL DEFAULT N'可用',   --可用/缺货
+    price_delta DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    status NVARCHAR(10) NOT NULL DEFAULT N'停用',   -- 可用/停用
 
     CONSTRAINT PK_ProductSpecification
         PRIMARY KEY (product_id, spec_id),
@@ -216,7 +257,7 @@ CREATE TABLE ProductSpecification (
         REFERENCES Specification(spec_id),
 
     CONSTRAINT CK_ProductSpecification_Status
-        CHECK (status IN (N'可用', N'缺货'))
+        CHECK (status IN (N'可用', N'停用'))
 );
 GO
 
@@ -254,6 +295,12 @@ CREATE TABLE AddOn (
     CONSTRAINT PK_AddOn
         PRIMARY KEY (addon_id),
 
+    CONSTRAINT CK_AddOn_Id_NotBlank
+        CHECK (LEN(LTRIM(RTRIM(addon_id))) > 0),
+
+    CONSTRAINT CK_AddOn_Name_NotBlank
+        CHECK (LEN(LTRIM(RTRIM(addon_name))) > 0),
+
     CONSTRAINT UK_AddOn_name
         UNIQUE (addon_name),
 
@@ -283,6 +330,9 @@ CREATE TABLE ItemSpec (
     CONSTRAINT PK_ItemSpec
         PRIMARY KEY (item_id, spec_type),
 
+    CONSTRAINT CK_ItemSpec_Name_NotBlank
+        CHECK (LEN(LTRIM(RTRIM(spec_name_snapshot))) > 0),
+
     CONSTRAINT FK_ItemSpec_OrderItem
         FOREIGN KEY (item_id)
         REFERENCES OrderItem(item_id),
@@ -302,6 +352,9 @@ CREATE TABLE ItemAddOn (
 
     CONSTRAINT PK_ItemAddOn
         PRIMARY KEY (item_id, addon_id),
+
+    CONSTRAINT CK_ItemAddOn_Name_NotBlank
+        CHECK (LEN(LTRIM(RTRIM(addon_name_snapshot))) > 0),
 
     CONSTRAINT FK_ItemAddOn_OrderItem
         FOREIGN KEY (item_id)
