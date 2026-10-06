@@ -45,6 +45,7 @@ GO
 
 -- 3. 规格原料规则：一行表示某商品、某规格作用于一种基础原料。
 -- 没有显式调整规则时 effective_factor 为 1，系数 0 会正常保留。
+-- adjusted_amount 保留乘积精度，不压回基础用量字段的 DECIMAL(10,2)。
 CREATE OR ALTER VIEW dbo.vw_SpecificationIngredientRule
 AS
 SELECT p.product_id,
@@ -61,7 +62,7 @@ SELECT p.product_id,
        r.base_amount,
        si.factor AS explicit_factor,
        CAST(COALESCE(si.factor, 1) AS DECIMAL(5,2)) AS effective_factor,
-       CAST(r.base_amount * COALESCE(si.factor, 1) AS DECIMAL(10,2)) AS adjusted_amount,
+       r.base_amount * COALESCE(si.factor, 1) AS adjusted_amount,
        CASE WHEN si.ingredient_id IS NULL THEN N'无调整规则，按1'
             ELSE N'显式规则' END AS rule_source
 FROM dbo.Product AS p
@@ -237,6 +238,7 @@ SELECT o.order_id,
                            WHERE saved.item_id = missing_item.item_id
                        )
                  ) THEN N'当前可按快照申请返库'
+            WHEN o.status = N'排队中' THEN N'明细缺少消耗快照，暂不能确定完整返库数量'
             WHEN o.status = N'已取消' THEN N'仅查看历史依据，不能再次返库'
             ELSE N'当前状态不允许退款' END AS refund_eligibility
 FROM dbo.SalesOrder AS o

@@ -7,6 +7,9 @@
 !*.sql
 !/ER图_修订版.png
 !/docs/**/*.md
+!/docs/第一阶段报告.docx
+!/figure/**/*.png
+!/figure/**/*.md
 
 # Dependencies and temporary files stay local even inside allowed directories.
 node_modules/

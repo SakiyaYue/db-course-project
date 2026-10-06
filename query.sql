@@ -113,6 +113,15 @@ LEFT JOIN @Plan AS l ON l.line_no = c.line_no
 LEFT JOIN dbo.Specification AS s ON s.spec_id = c.spec_id AND s.spec_type = c.spec_type
 LEFT JOIN dbo.ProductSpecification AS ps ON ps.product_id = l.product_id AND ps.spec_id = c.spec_id
 WHERE l.line_no IS NULL OR s.spec_id IS NULL OR ps.spec_id IS NULL OR ps.status <> N'可用';
+-- 每种开放类型必须明确选择一个选项；默认选项也不能省略。
+INSERT INTO @Problems
+SELECT DISTINCT l.line_no, N'未选择商品开放的必选规格：' + s.spec_type
+FROM @Plan AS l
+JOIN dbo.ProductSpecification AS ps ON ps.product_id = l.product_id
+JOIN dbo.Specification AS s ON s.spec_id = ps.spec_id
+WHERE ps.status = N'可用'
+  AND NOT EXISTS (SELECT 1 FROM @ChosenSpecs AS c
+                  WHERE c.line_no = l.line_no AND c.spec_type = s.spec_type);
 INSERT INTO @Problems
 SELECT c.line_no, N'加料明细不存在、加料不存在或不可用'
 FROM @ChosenAddOns AS c LEFT JOIN @Plan AS l ON l.line_no = c.line_no
