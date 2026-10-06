@@ -1,18 +1,19 @@
 # 蜜雪冰城单门店数据库课程项目
 
-面向单个门店的数据库课程项目，涵盖商品、原料库存、订单、会员、员工值班、规格和加料管理。数据库设计以 SQL Server 为目标，当前包含需求与设计文档、15 张表的关系模式及 ER 图，尚未提供 SQL 建表脚本或可运行的业务系统。
+面向单个门店的数据库课程项目，涵盖商品、原料库存、订单、会员、员工值班、规格和加料管理。数据库设计以 SQL Server 为目标，当前包含需求与设计文档、15 张表的关系模式及 ER 图，以及建库建表和初始化样例脚本，尚未提供可运行的业务系统。
 
 ## 文件说明
 
 | 文件 / 目录 | 内容 |
 | --- | --- |
-| [baseline.md](baseline.md) | 已确认的业务需求和设计原则 |
 | [第二周关系模式与数据字典](docs/第二周关系模式与数据字典.md) | 表结构、字段、主外键、业务约束及待审查样例 |
 | [ER图_修订版.png](ER图_修订版.png) | 当前设计对应的 ER 图 |
-| `docs/er/` | ER 图的 SVG、DOT、预览图及结构化数据 `schema.json` |
-| `scripts/绘制ER图.cjs` | 根据数据字典生成 ER 图的 Node.js 脚本 |
-| `第一周任务讲解.docx` ～ `第四周任务讲解.docx` | 各周课程任务说明 |
-| `ER图.png`、`ER图草图.jpg` | 早期设计参考 |
+| [db_creation.sql](db_creation.sql) | SQL Server 建库建表；小计为持久化计算列，规格类型为温度／糖度／杯型 |
+| [seed_data.sql](seed_data.sql) | 独立装载 15 张表的 232 条初始化样例；要求空表，事务内装载 |
+| [crud_demo.sql](crud_demo.sql) | 样例 CRUD、商品上下架、取消返库、完成订单积分、值班团队查询；结束回滚 |
+| [query.sql](query.sql) | 商品、库存、订单、值班团队等只读查询及金额核对 |
+| [SSMS 19 建库与 CRUD 操作说明](docs/SSMS19建库与CRUD操作说明.md) | 连接本机实例、执行顺序、预期结果和实验截图建议 |
+| [建库与 ER 图一致性检查](docs/建库与ER图一致性检查.md) | 初次检查结果及后续已确认选项的落实记录 |
 
 ## 使用方法
 
@@ -23,18 +24,20 @@ git clone https://github.com/SakiyaYue/db-course-project.git
 cd db-course-project
 ```
 
-建议先阅读 `baseline.md`，再查看数据字典和修订版 ER 图。Word 文档可用 Microsoft Word 或 WPS 打开；PNG 图片可直接查看，SVG 可用浏览器打开。
+建议先阅读数据字典，再查看修订版 ER 图。PNG 图片可直接查看。
 
 数据字典中标注“待确认”或“待审查”的选项、数值及样例不代表最终方案，后续实现以小组确认结果为准。
 
-## 重新生成 ER 图（可选）
+在 SSMS 19 中连接本机默认实例 `localhost`，依次完整执行 `db_creation.sql` → `seed_data.sql` → `query.sql` → `crud_demo.sql` → `query.sql`。**建库脚本会删除已有 TeabarDB 后重建，请仅在首次初始化或明确需要重置课程数据时运行。** 样例脚本只向空表插入数据，重复装载会被拒绝；CRUD 演示结束回滚，重复演示时只需再次运行 CRUD。
 
-需要 Node.js 和 npm。以下命令在仓库根目录的 PowerShell 中执行：
+CRUD 直接对样例商品 P001 改价、原料 I001 补库，并让会员 M001 购买 P001，使用现有规格及加料 A001 创建 20 元测试订单。新增的测试商品和原料参考原样例，只用于演示 INSERT／DELETE；演示结束原样例的价格、库存及历史订单恢复。详细步骤和预期结果见操作说明。
 
-```powershell
-npm install --no-save --package-lock=false @viz-js/viz sharp
-$env:ER_DEPENDENCY_PACKAGES = Join-Path (Get-Location).Path 'node_modules'
-node .\scripts\绘制ER图.cjs
-```
+另演示 P001 下架后重新上架、CO002 完成后 M001 积分 120 → 140（沿用订单金额向下取整的设计假设），并验证重复完成不再加分。值班团队按订单创建时间匹配排班，展示交接前后的人员；最终回滚也恢复商品状态和会员积分。
 
-脚本读取 `docs/第二周关系模式与数据字典.md`，更新根目录的 `ER图_修订版.png` 及 `docs/er/` 下的生成文件。图中业务注释和联系定义也保存在脚本中，设计调整时应同步更新。渲染通过 `@viz-js/viz` 完成，无需单独安装 Graphviz；中文字体采用 Microsoft YaHei，建议在安装该字体的环境下生成。
+编辑脚本不会自动更新已有数据库。本次修改已在 tempdb 回滚事务中验证，本机现有 TeabarDB 尚未应用计算列及“温度”类型更新；运行新版 CRUD 前应先更新目标库。实验截图及提交结果材料后续整理。
+
+## 仓库收录范围
+
+仓库收录全部 SQL 文件、`ER图_修订版.png` 和 `docs/` 中的 Markdown 文档，并保留 README、LICENSE 和 `.gitignore`。
+
+课程 Word 资料、需求讨论记录 `baseline.md`、旧版 ER 图、绘图脚本及 `docs/er/` 中间文件仅保留在本地，由 `.gitignore` 排除。调整图时可使用本地绘图脚本，提交更新后的修订版 PNG。

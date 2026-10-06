@@ -1,2 +1,14 @@
+# Only publish project deliverables. Other files stay local.
+*
+!*/
+!/.gitignore
+!/README.md
+!/LICENSE
+!*.sql
+!/ER图_修订版.png
+!/docs/**/*.md
+
+# Dependencies and temporary files stay local even inside allowed directories.
 node_modules/
 npm-debug.log*
+~$*
