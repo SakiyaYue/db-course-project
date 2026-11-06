@@ -1,0 +1,151 @@
+classDiagram
+direction LR
+
+class Employee {
+  +varchar employee_id PK
+  +nvarchar name
+  +nvarchar status
+  +decimal salary
+  +nvarchar role
+}
+
+class DutyRoster {
+  +varchar duty_id PK
+  +varchar employee_id FK
+  +datetime2 start_time
+  +datetime2 end_time
+  +UK employee_id_start_time
+}
+
+class Member {
+  +varchar member_id PK
+  +nvarchar name
+  +varchar phone UK
+  +int points
+}
+
+class PrincipalBinding {
+  +varbinary principal_sid PK
+  +sysname principal_name UK
+  +varchar member_id FK_nullable
+  +uniqueidentifier guest_id nullable
+  +bit is_active
+}
+
+class SalesOrder {
+  +varchar order_id PK
+  +varchar member_id FK_nullable
+  +uniqueidentifier guest_id nullable
+  +datetime2 order_time
+  +decimal total_amount
+  +nvarchar status
+  +CHECK member_xor_guest
+}
+
+class Product {
+  +varchar product_id PK
+  +nvarchar product_name
+  +decimal base_price
+  +nvarchar status
+  +nvarchar description nullable
+}
+
+class Ingredient {
+  +varchar ingredient_id PK
+  +nvarchar ingredient_name
+  +nvarchar unit
+  +decimal stock
+  +nvarchar status
+}
+
+class Specification {
+  +varchar spec_id PK
+  +nvarchar spec_type
+  +nvarchar spec_name
+  +UK spec_type_spec_name
+  +UNIQUE spec_id_spec_type
+}
+
+class AddOn {
+  +varchar addon_id PK
+  +nvarchar addon_name UK
+  +decimal price
+  +varchar ingredient_id FK
+  +decimal extra_amount
+  +nvarchar status
+}
+
+class ProductSpecification {
+  +varchar product_id PK_FK
+  +varchar spec_id PK_FK
+  +decimal price_delta
+  +nvarchar status
+}
+
+class Recipe {
+  +varchar product_id PK_FK
+  +varchar ingredient_id PK_FK
+  +decimal base_amount
+}
+
+class SpecificationIngredient {
+  +varchar product_id PK_FK
+  +varchar spec_id PK_FK
+  +varchar ingredient_id PK_FK
+  +decimal factor
+}
+
+class OrderItem {
+  +varchar item_id PK
+  +varchar order_id FK
+  +varchar product_id FK
+  +nvarchar product_name_snapshot
+  +int quantity
+  +decimal base_price_snapshot
+  +decimal unit_price
+  +decimal sub_amount computed
+}
+
+class ItemSpec {
+  +varchar item_id PK_FK
+  +nvarchar spec_type PK_FK
+  +varchar spec_id FK
+  +nvarchar spec_name_snapshot
+  +decimal price_delta_snapshot
+}
+
+class ItemAddOn {
+  +varchar item_id PK_FK
+  +varchar addon_id PK_FK
+  +nvarchar addon_name_snapshot
+  +decimal price_snapshot
+}
+
+class OrderItemIngredient {
+  +varchar item_id PK_FK
+  +varchar ingredient_id PK_FK
+  +decimal amount
+}
+
+Employee "1" --> "0..*" DutyRoster : employee_id FK
+SalesOrder "0..*" --> "0..1" Member : member_id FK
+PrincipalBinding "0..*" --> "0..1" Member : member_id FK
+SalesOrder "1" --> "1..*" OrderItem : order_id FK, minimum by process
+OrderItem "0..*" --> "1" Product : product_id FK
+Product "1" --> "0..*" ProductSpecification : product_id FK
+ProductSpecification "0..*" --> "1" Specification : spec_id FK
+Product "1" --> "0..*" Recipe : product_id FK
+Recipe "0..*" --> "1" Ingredient : ingredient_id FK
+ProductSpecification "1" --> "0..*" SpecificationIngredient : product_id_spec_id FK
+Recipe "1" --> "0..*" SpecificationIngredient : product_id_ingredient_id FK
+SpecificationIngredient "0..*" --> "1" Ingredient : ingredient_id FK
+AddOn "0..*" --> "1" Ingredient : ingredient_id FK
+OrderItem "1" --> "0..3" ItemSpec : item_id FK
+ItemSpec "0..*" --> "1" Specification : spec_id_spec_type FK
+OrderItem "1" --> "0..*" ItemAddOn : item_id FK
+ItemAddOn "0..*" --> "1" AddOn : addon_id FK
+OrderItem "1" --> "1..*" OrderItemIngredient : item_id FK, current gap
+OrderItemIngredient "0..*" --> "1" Ingredient : ingredient_id FK
+
+DutyRoster "0..*" ..> "0..*" SalesOrder : order_time within duty interval
+PrincipalBinding "0..*" ..> "0..*" SalesOrder : current identity ownership check

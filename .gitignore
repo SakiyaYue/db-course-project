@@ -10,8 +10,23 @@
 !/docs/第一阶段报告.docx
 !/figure/**/*.png
 !/figure/**/*.md
+!/database/**/*.md
+!/database/**/*.sql
+!/design/**/*.md
+!/design/**/*.drawio
+!/design/**/*.mmd
+!/design/**/*.png
+!/results/**/*.md
+!/results/**/*.png
+!/results/**/*.json
+!/results/**/*.txt
+!/results/**/*.csv
 
 # Dependencies and temporary files stay local even inside allowed directories.
 node_modules/
 npm-debug.log*
 ~$*
+
+# Course briefs stay local; the maintained phase checklist is a project deliverable.
+/NEW-TODO/*
+!/NEW-TODO/第二阶段分阶段任务清单.md
