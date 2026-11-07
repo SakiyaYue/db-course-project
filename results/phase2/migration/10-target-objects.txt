@@ -1,0 +1,360 @@
+﻿stage schema_name table_name
+----- ----------- ----------
+TARGET_TABLES dbo AddOn
+TARGET_TABLES dbo DutyRoster
+TARGET_TABLES dbo Employee
+TARGET_TABLES dbo Ingredient
+TARGET_TABLES dbo ItemAddOn
+TARGET_TABLES dbo ItemSpec
+TARGET_TABLES dbo Member
+TARGET_TABLES dbo OrderItem
+TARGET_TABLES dbo OrderItemIngredient
+TARGET_TABLES dbo Product
+TARGET_TABLES dbo ProductSpecification
+TARGET_TABLES dbo Recipe
+TARGET_TABLES dbo SalesOrder
+TARGET_TABLES dbo Specification
+TARGET_TABLES dbo SpecificationIngredient
+TARGET_TABLES teabar_auth PrincipalBinding
+TARGET_TABLES teabar_auth WebAccount
+stage schema_name table_name column_id column_name type_name max_length precision scale is_nullable is_identity is_computed is_persisted
+----- ----------- ---------- --------- ----------- --------- ---------- --------- ----- ----------- ----------- ----------- ------------
+TARGET_COLUMNS dbo AddOn 1 addon_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo AddOn 2 addon_name nvarchar 100 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo AddOn 3 price decimal 9 10 2 0 0 0 NULL
+TARGET_COLUMNS dbo AddOn 4 ingredient_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo AddOn 5 extra_amount decimal 9 10 2 0 0 0 NULL
+TARGET_COLUMNS dbo AddOn 6 status nvarchar 20 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo DutyRoster 1 duty_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo DutyRoster 2 employee_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo DutyRoster 3 start_time datetime2 6 19 0 0 0 0 NULL
+TARGET_COLUMNS dbo DutyRoster 4 end_time datetime2 6 19 0 0 0 0 NULL
+TARGET_COLUMNS dbo Employee 1 employee_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo Employee 2 name nvarchar 100 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo Employee 3 status nvarchar 20 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo Employee 4 salary decimal 9 10 2 0 0 0 NULL
+TARGET_COLUMNS dbo Employee 5 role nvarchar 40 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo Ingredient 1 ingredient_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo Ingredient 2 ingredient_name nvarchar 100 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo Ingredient 3 unit nvarchar 20 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo Ingredient 4 stock decimal 9 10 2 0 0 0 NULL
+TARGET_COLUMNS dbo Ingredient 5 status nvarchar 20 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo ItemAddOn 1 item_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo ItemAddOn 2 addon_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo ItemAddOn 3 addon_name_snapshot nvarchar 100 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo ItemAddOn 4 price_snapshot decimal 9 10 2 0 0 0 NULL
+TARGET_COLUMNS dbo ItemSpec 1 item_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo ItemSpec 2 spec_type nvarchar 40 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo ItemSpec 3 spec_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo ItemSpec 4 spec_name_snapshot nvarchar 40 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo ItemSpec 5 price_delta_snapshot decimal 9 10 2 0 0 0 NULL
+TARGET_COLUMNS dbo Member 1 member_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo Member 2 name nvarchar 100 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo Member 3 phone varchar 20 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo Member 4 points int 4 10 0 0 0 0 NULL
+TARGET_COLUMNS dbo OrderItem 1 item_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo OrderItem 2 order_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo OrderItem 3 product_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo OrderItem 4 product_name_snapshot nvarchar 100 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo OrderItem 5 quantity int 4 10 0 0 0 0 NULL
+TARGET_COLUMNS dbo OrderItem 6 base_price_snapshot decimal 9 10 2 0 0 0 NULL
+TARGET_COLUMNS dbo OrderItem 7 unit_price decimal 9 10 2 0 0 0 NULL
+TARGET_COLUMNS dbo OrderItem 8 sub_amount decimal 9 10 2 0 0 1 1
+TARGET_COLUMNS dbo OrderItemIngredient 1 item_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo OrderItemIngredient 2 ingredient_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo OrderItemIngredient 3 amount decimal 9 10 2 0 0 0 NULL
+TARGET_COLUMNS dbo Product 1 product_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo Product 2 product_name nvarchar 100 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo Product 3 base_price decimal 9 10 2 0 0 0 NULL
+TARGET_COLUMNS dbo Product 4 status nvarchar 20 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo Product 5 description nvarchar 400 0 0 1 0 0 NULL
+TARGET_COLUMNS dbo ProductSpecification 1 product_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo ProductSpecification 2 spec_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo ProductSpecification 3 price_delta decimal 9 10 2 0 0 0 NULL
+TARGET_COLUMNS dbo ProductSpecification 4 status nvarchar 20 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo Recipe 1 product_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo Recipe 2 ingredient_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo Recipe 3 base_amount decimal 9 10 2 0 0 0 NULL
+TARGET_COLUMNS dbo SalesOrder 1 order_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo SalesOrder 2 member_id varchar 10 0 0 1 0 0 NULL
+TARGET_COLUMNS dbo SalesOrder 3 order_time datetime2 6 19 0 0 0 0 NULL
+TARGET_COLUMNS dbo SalesOrder 4 total_amount decimal 9 10 2 0 0 0 NULL
+TARGET_COLUMNS dbo SalesOrder 5 status nvarchar 40 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo SalesOrder 6 guest_id uniqueidentifier 16 0 0 1 0 0 NULL
+TARGET_COLUMNS dbo Specification 1 spec_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo Specification 2 spec_type nvarchar 40 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo Specification 3 spec_name nvarchar 40 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo SpecificationIngredient 1 product_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo SpecificationIngredient 2 spec_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo SpecificationIngredient 3 ingredient_id varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS dbo SpecificationIngredient 4 factor decimal 5 5 2 0 0 0 NULL
+TARGET_COLUMNS teabar_auth PrincipalBinding 1 principal_sid varbinary 85 0 0 0 0 0 NULL
+TARGET_COLUMNS teabar_auth PrincipalBinding 2 principal_name sysname 256 0 0 0 0 0 NULL
+TARGET_COLUMNS teabar_auth PrincipalBinding 3 member_id varchar 10 0 0 1 0 0 NULL
+TARGET_COLUMNS teabar_auth PrincipalBinding 4 guest_id uniqueidentifier 16 0 0 1 0 0 NULL
+TARGET_COLUMNS teabar_auth PrincipalBinding 5 is_active bit 1 1 0 0 0 0 NULL
+TARGET_COLUMNS teabar_auth WebAccount 1 account_id int 4 10 0 0 1 0 NULL
+TARGET_COLUMNS teabar_auth WebAccount 2 login_name nvarchar 100 0 0 0 0 0 NULL
+TARGET_COLUMNS teabar_auth WebAccount 3 password_hash nvarchar 1024 0 0 0 0 0 NULL
+TARGET_COLUMNS teabar_auth WebAccount 4 app_role varchar 10 0 0 0 0 0 NULL
+TARGET_COLUMNS teabar_auth WebAccount 5 principal_sid varbinary 85 0 0 0 0 0 NULL
+TARGET_COLUMNS teabar_auth WebAccount 6 is_active bit 1 1 0 0 0 0 NULL
+TARGET_COLUMNS teabar_auth WebAccount 7 session_version int 4 10 0 0 0 0 NULL
+stage schema_name table_name name type column_name key_ordinal
+----- ----------- ---------- ---- ---- ----------- -----------
+TARGET_KEYS dbo AddOn PK_AddOn PK addon_id 1
+TARGET_KEYS dbo AddOn UK_AddOn_name UQ addon_name 1
+TARGET_KEYS dbo DutyRoster PK_DutyRoster PK duty_id 1
+TARGET_KEYS dbo DutyRoster UQ_DutyRoster_Employee_StartTime UQ employee_id 1
+TARGET_KEYS dbo DutyRoster UQ_DutyRoster_Employee_StartTime UQ start_time 2
+TARGET_KEYS dbo Employee PK_Employee PK employee_id 1
+TARGET_KEYS dbo Ingredient PK_Ingredient PK ingredient_id 1
+TARGET_KEYS dbo ItemAddOn PK_ItemAddOn PK item_id 1
+TARGET_KEYS dbo ItemAddOn PK_ItemAddOn PK addon_id 2
+TARGET_KEYS dbo ItemSpec PK_ItemSpec PK item_id 1
+TARGET_KEYS dbo ItemSpec PK_ItemSpec PK spec_type 2
+TARGET_KEYS dbo Member PK_Member PK member_id 1
+TARGET_KEYS dbo Member UK_Member_Phone UQ phone 1
+TARGET_KEYS dbo OrderItem PK_OrderItem PK item_id 1
+TARGET_KEYS dbo OrderItemIngredient PK_OrderItemIngredient PK item_id 1
+TARGET_KEYS dbo OrderItemIngredient PK_OrderItemIngredient PK ingredient_id 2
+TARGET_KEYS dbo Product PK_Product PK product_id 1
+TARGET_KEYS dbo ProductSpecification PK_ProductSpecification PK product_id 1
+TARGET_KEYS dbo ProductSpecification PK_ProductSpecification PK spec_id 2
+TARGET_KEYS dbo Recipe PK_Recipe PK product_id 1
+TARGET_KEYS dbo Recipe PK_Recipe PK ingredient_id 2
+TARGET_KEYS dbo SalesOrder PK_SalesOrder PK order_id 1
+TARGET_KEYS dbo Specification PK_Specification PK spec_id 1
+TARGET_KEYS dbo Specification UK_Specification_idtype UQ spec_id 1
+TARGET_KEYS dbo Specification UK_Specification_idtype UQ spec_type 2
+TARGET_KEYS dbo Specification UK_Specification_typename UQ spec_type 1
+TARGET_KEYS dbo Specification UK_Specification_typename UQ spec_name 2
+TARGET_KEYS dbo SpecificationIngredient PK_SpecificationIngredient PK product_id 1
+TARGET_KEYS dbo SpecificationIngredient PK_SpecificationIngredient PK spec_id 2
+TARGET_KEYS dbo SpecificationIngredient PK_SpecificationIngredient PK ingredient_id 3
+TARGET_KEYS teabar_auth PrincipalBinding PK_PrincipalBinding PK principal_sid 1
+TARGET_KEYS teabar_auth PrincipalBinding UQ_PrincipalBinding_Name UQ principal_name 1
+TARGET_KEYS teabar_auth WebAccount PK_WebAccount PK account_id 1
+TARGET_KEYS teabar_auth WebAccount UQ_WebAccount_LoginName UQ login_name 1
+TARGET_KEYS teabar_auth WebAccount UQ_WebAccount_PrincipalSid UQ principal_sid 1
+stage name child_schema child_table child_column parent_schema parent_table parent_column constraint_column_id is_disabled is_not_trusted
+----- ---- ------------ ----------- ------------ ------------- ------------ ------------- -------------------- ----------- --------------
+TARGET_FK FK_AddOn_Ingredient dbo AddOn ingredient_id dbo Ingredient ingredient_id 1 0 0
+TARGET_FK FK_DutyRoster_Employee dbo DutyRoster employee_id dbo Employee employee_id 1 0 0
+TARGET_FK FK_ItemAddOn_AddOn dbo ItemAddOn addon_id dbo AddOn addon_id 1 0 0
+TARGET_FK FK_ItemAddOn_OrderItem dbo ItemAddOn item_id dbo OrderItem item_id 1 0 0
+TARGET_FK FK_ItemSpec_OrderItem dbo ItemSpec item_id dbo OrderItem item_id 1 0 0
+TARGET_FK FK_ItemSpec_Spec_id dbo ItemSpec spec_id dbo Specification spec_id 1 0 0
+TARGET_FK FK_ItemSpec_Spec_id dbo ItemSpec spec_type dbo Specification spec_type 2 0 0
+TARGET_FK FK_OrderItem_Order dbo OrderItem order_id dbo SalesOrder order_id 1 0 0
+TARGET_FK FK_OrderItem_Product dbo OrderItem product_id dbo Product product_id 1 0 0
+TARGET_FK FK_OrderItemIngredient_Ingredient dbo OrderItemIngredient ingredient_id dbo Ingredient ingredient_id 1 0 0
+TARGET_FK FK_OrderItemIngredient_OrderItem dbo OrderItemIngredient item_id dbo OrderItem item_id 1 0 0
+TARGET_FK FK_PrincipalBinding_Member teabar_auth PrincipalBinding member_id dbo Member member_id 1 0 0
+TARGET_FK FK_ProductSpecification_Product dbo ProductSpecification product_id dbo Product product_id 1 0 0
+TARGET_FK FK_ProductSpecification_Specification dbo ProductSpecification spec_id dbo Specification spec_id 1 0 0
+TARGET_FK FK_Recipe_Ingredient dbo Recipe ingredient_id dbo Ingredient ingredient_id 1 0 0
+TARGET_FK FK_Recipe_Product dbo Recipe product_id dbo Product product_id 1 0 0
+TARGET_FK FK_SalesOrder_Member dbo SalesOrder member_id dbo Member member_id 1 0 0
+TARGET_FK FK_SpecificationIngredient_Ingredient dbo SpecificationIngredient ingredient_id dbo Ingredient ingredient_id 1 0 0
+TARGET_FK FK_SpecificationIngredient_ProductSpec dbo SpecificationIngredient product_id dbo ProductSpecification product_id 1 0 0
+TARGET_FK FK_SpecificationIngredient_ProductSpec dbo SpecificationIngredient spec_id dbo ProductSpecification spec_id 2 0 0
+TARGET_FK FK_SpecificationIngredient_Recipe dbo SpecificationIngredient product_id dbo Recipe product_id 1 0 0
+TARGET_FK FK_SpecificationIngredient_Recipe dbo SpecificationIngredient ingredient_id dbo Recipe ingredient_id 2 0 0
+stage schema_name table_name name definition is_disabled is_not_trusted
+----- ----------- ---------- ---- ---------- ----------- --------------
+TARGET_CHECK dbo AddOn CK_AddOn_ExtraAmount ([extra_amount]>(0)) 0 0
+TARGET_CHECK dbo AddOn CK_AddOn_Id_NotBlank (len(ltrim(rtrim([addon_id])))>(0)) 0 0
+TARGET_CHECK dbo AddOn CK_AddOn_Name_NotBlank (len(ltrim(rtrim([addon_name])))>(0)) 0 0
+TARGET_CHECK dbo AddOn CK_AddOn_Price ([price]>=(0)) 0 0
+TARGET_CHECK dbo AddOn CK_AddOn_Status ([status]=N'缺货' OR [status]=N'可用') 0 0
+TARGET_CHECK dbo DutyRoster CK_DutyRoster_Id_NotBlank (len(ltrim(rtrim([duty_id])))>(0)) 0 0
+TARGET_CHECK dbo DutyRoster CK_DutyRoster_Time ([start_time]<[end_time]) 0 0
+TARGET_CHECK dbo Employee CK_Employee_Id_NotBlank (len(ltrim(rtrim([employee_id])))>(0)) 0 0
+TARGET_CHECK dbo Employee CK_Employee_Name_NotBlank (len(ltrim(rtrim([name])))>(0)) 0 0
+TARGET_CHECK dbo Employee CK_Employee_Role ([role]=N'店长' OR [role]=N'店员') 0 0
+TARGET_CHECK dbo Employee CK_Employee_Salary ([salary]>=(0)) 0 0
+TARGET_CHECK dbo Employee CK_Employee_Status ([status]=N'离职' OR [status]=N'在职') 0 0
+TARGET_CHECK dbo Ingredient CK_Ingredient_Id_NotBlank (len(ltrim(rtrim([ingredient_id])))>(0)) 0 0
+TARGET_CHECK dbo Ingredient CK_Ingredient_Name_NotBlank (len(ltrim(rtrim([ingredient_name])))>(0)) 0 0
+TARGET_CHECK dbo Ingredient CK_Ingredient_PieceStock ([unit]<>N'个' OR [stock]=floor([stock])) 0 0
+TARGET_CHECK dbo Ingredient CK_Ingredient_Status ([status]=N'缺货' OR [status]=N'可用') 0 0
+TARGET_CHECK dbo Ingredient CK_Ingredient_Stock ([stock]>=(0)) 0 0
+TARGET_CHECK dbo Ingredient CK_Ingredient_Unit ([unit]=N'个' OR [unit]=N'ml' OR [unit]=N'g') 0 0
+TARGET_CHECK dbo ItemAddOn CK_ItemAddOn_Name_NotBlank (len(ltrim(rtrim([addon_name_snapshot])))>(0)) 0 0
+TARGET_CHECK dbo ItemAddOn CK_ItemAddOn_Price ([price_snapshot]>=(0)) 0 0
+TARGET_CHECK dbo ItemSpec CK_ItemSpec_Name_NotBlank (len(ltrim(rtrim([spec_name_snapshot])))>(0)) 0 0
+TARGET_CHECK dbo Member CK_Member_Id_NotBlank (len(ltrim(rtrim([member_id])))>(0)) 0 0
+TARGET_CHECK dbo Member CK_Member_Name_NotBlank (len(ltrim(rtrim([name])))>(0)) 0 0
+TARGET_CHECK dbo Member CK_Member_Phone_Format (datalength([phone])=(11) AND [phone] like '1%' AND NOT ([phone]) collate Latin1_General_100_BIN2 like '%[^0-9]%') 0 0
+TARGET_CHECK dbo Member CK_Member_Points ([points]>=(0)) 0 0
+TARGET_CHECK dbo OrderItem CK_OrderItem_BasePrice ([base_price_snapshot]>=(0)) 0 0
+TARGET_CHECK dbo OrderItem CK_OrderItem_Id_NotBlank (len(ltrim(rtrim([item_id])))>(0)) 0 0
+TARGET_CHECK dbo OrderItem CK_OrderItem_ProductName_NotBlank (len(ltrim(rtrim([product_name_snapshot])))>(0)) 0 0
+TARGET_CHECK dbo OrderItem CK_OrderItem_Quantity ([quantity]>(0)) 0 0
+TARGET_CHECK dbo OrderItem CK_OrderItem_UnitPrice ([unit_price]>=(0)) 0 0
+TARGET_CHECK dbo OrderItemIngredient CK_OrderItemIngredient_Amount ([amount]>(0)) 0 0
+TARGET_CHECK dbo Product CK_Product_Id_NotBlank (len(ltrim(rtrim([product_id])))>(0)) 0 0
+TARGET_CHECK dbo Product CK_Product_Name_NotBlank (len(ltrim(rtrim([product_name])))>(0)) 0 0
+TARGET_CHECK dbo Product CK_Product_Price ([base_price]>=(0)) 0 0
+TARGET_CHECK dbo Product CK_Product_Status ([status]=N'下架' OR [status]=N'在售') 0 0
+TARGET_CHECK dbo ProductSpecification CK_ProductSpecification_Status ([status]=N'停用' OR [status]=N'可用') 0 0
+TARGET_CHECK dbo Recipe CK_Recipe_BaseAmount ([base_amount]>(0)) 0 0
+TARGET_CHECK dbo SalesOrder CK_SalesOrder_Amount ([total_amount]>=(0)) 0 0
+TARGET_CHECK dbo SalesOrder CK_SalesOrder_Id_NotBlank (len(ltrim(rtrim([order_id])))>(0)) 0 0
+TARGET_CHECK dbo SalesOrder CK_SalesOrder_Owner ([member_id] IS NOT NULL AND [guest_id] IS NULL OR [member_id] IS NULL AND [guest_id] IS NOT NULL) 0 0
+TARGET_CHECK dbo SalesOrder CK_SalesOrder_status ([status]=N'已取消' OR [status]=N'已完成' OR [status]=N'待取餐' OR [status]=N'制作中' OR [status]=N'排队中') 0 0
+TARGET_CHECK dbo Specification CK_Specification_Id_NotBlank (len(ltrim(rtrim([spec_id])))>(0)) 0 0
+TARGET_CHECK dbo Specification CK_Specification_Name_NotBlank (len(ltrim(rtrim([spec_name])))>(0)) 0 0
+TARGET_CHECK dbo Specification CK_Specification_Type ([spec_type]=N'杯型' OR [spec_type]=N'温度' OR [spec_type]=N'糖度') 0 0
+TARGET_CHECK dbo SpecificationIngredient CK_SpecificationIngredient_Factor ([factor]>=(0)) 0 0
+TARGET_CHECK teabar_auth PrincipalBinding CK_PrincipalBinding_Identity ([member_id] IS NOT NULL AND [guest_id] IS NULL OR [member_id] IS NULL AND [guest_id] IS NOT NULL) 0 0
+TARGET_CHECK teabar_auth WebAccount CK_WebAccount_LoginName (datalength([login_name])>=(6) AND datalength([login_name])<=(100) AND NOT ([login_name]) collate Latin1_General_100_BIN2 like N'%[^a-z0-9._-]%') 0 0
+TARGET_CHECK teabar_auth WebAccount CK_WebAccount_PasswordHash (len(ltrim(rtrim([password_hash])))>(0)) 0 0
+TARGET_CHECK teabar_auth WebAccount CK_WebAccount_Role ((([app_role]) collate Latin1_General_100_BIN2='manager' OR ([app_role]) collate Latin1_General_100_BIN2='clerk' OR ([app_role]) collate Latin1_General_100_BIN2='member' OR ([app_role]) collate Latin1_General_100_BIN2='customer') AND datalength([app_role]) 0 0
+TARGET_CHECK teabar_auth WebAccount CK_WebAccount_SessionVersion ([session_version]>(0)) 0 0
+TARGET_CHECK teabar_auth WebAccount CK_WebAccount_Sid (datalength([principal_sid])>=(1) AND datalength([principal_sid])<=(85)) 0 0
+stage table_name name is_unique is_disabled filter_definition column_name key_ordinal is_included_column
+----- ---------- ---- --------- ----------- ----------------- ----------- ----------- ------------------
+TARGET_INDEX OrderItem IX_OrderItem_Order 0 0 NULL order_id 1 0
+TARGET_INDEX OrderItem IX_OrderItem_Order 0 0 NULL product_id 0 1
+TARGET_INDEX OrderItem IX_OrderItem_Order 0 0 NULL quantity 0 1
+TARGET_INDEX OrderItem IX_OrderItem_Order 0 0 NULL unit_price 0 1
+TARGET_INDEX OrderItem IX_OrderItem_Order 0 0 NULL sub_amount 0 1
+TARGET_INDEX OrderItem IX_OrderItem_Order 0 0 NULL product_name_snapshot 0 1
+TARGET_INDEX OrderItem IX_OrderItem_Order 0 0 NULL base_price_snapshot 0 1
+TARGET_INDEX SalesOrder IX_SalesOrder_Guest_Time 0 0 ([guest_id] IS NOT NULL) guest_id 1 0
+TARGET_INDEX SalesOrder IX_SalesOrder_Guest_Time 0 0 ([guest_id] IS NOT NULL) order_time 2 0
+TARGET_INDEX SalesOrder IX_SalesOrder_Guest_Time 0 0 ([guest_id] IS NOT NULL) total_amount 0 1
+TARGET_INDEX SalesOrder IX_SalesOrder_Guest_Time 0 0 ([guest_id] IS NOT NULL) status 0 1
+TARGET_INDEX SalesOrder IX_SalesOrder_Member_Time 0 0 ([member_id] IS NOT NULL) member_id 1 0
+TARGET_INDEX SalesOrder IX_SalesOrder_Member_Time 0 0 ([member_id] IS NOT NULL) order_time 2 0
+TARGET_INDEX SalesOrder IX_SalesOrder_Member_Time 0 0 ([member_id] IS NOT NULL) total_amount 0 1
+TARGET_INDEX SalesOrder IX_SalesOrder_Member_Time 0 0 ([member_id] IS NOT NULL) status 0 1
+stage schema_name name type execute_as_principal_id definition_hash
+----- ----------- ---- ---- ----------------------- ---------------
+TARGET_MODULE dbo vw_AddOnAvailability V  NULL CE3EC46E22784EDD9B5A0399A56244CA836F711852722B0FEBBD1EDC5D183A2E
+TARGET_MODULE dbo vw_DailySalesStatistics V  NULL BFEE7DB37792A9959616AA94C5110D88943AF1411EB7686072B0BA45A4F671C8
+TARGET_MODULE dbo vw_DutyRosterDetail V  NULL F8045A672B55881457058E242BBB513CC542585EE4467E4CC55CDD890725AC9F
+TARGET_MODULE dbo vw_IngredientStock V  NULL ED7DB4E8E3D89A945AB04518DDF75CAD07D5340E8E72EE2D3E08D69B1C7B630A
+TARGET_MODULE dbo vw_MemberConsumptionStatistics V  NULL 420DC80663488A0DEC3EEE3357AAFEED7068DF01AD6FF3FB7328FEEF63ACF971
+TARGET_MODULE dbo vw_OrderDetail V  NULL 125513FF528C755F25B24DA4687B68A2A9F6ABB40E2A1EC1EB2598DA1D9741CB
+TARGET_MODULE dbo vw_OrderDutyTeam V  NULL 82AAC446A827E8B852F4F0542583A9D7439E783F99FA08D1507F9181F1FD7875
+TARGET_MODULE dbo vw_OrderIngredientUsage V  NULL 9A23185333A223C8D171DD5DF053E711419F45F6B506BE394AA0BC3F3A158936
+TARGET_MODULE dbo vw_OrderSummary V  NULL E6599B98D615C20F538DD786FFEF49DBA7378113180C5174DF126801782694CB
+TARGET_MODULE dbo vw_ProductCatalog V  NULL 88F2C0B68E3BA687474E26947029B7FAC9AAB7493D79712FB0077F7086EF3983
+TARGET_MODULE dbo vw_ProductSalesStatistics V  NULL 0BAEAEF5F2CE610006B0CE14C89EE57B7CE1AF57C330149DFE455F3A0406B3BD
+TARGET_MODULE dbo vw_ProductSpecification V  NULL 81DAAB00D9299AB2DD9DDCBF0B33EE1A260F36F32E9E2A2DBF7B043FEF3971FC
+TARGET_MODULE dbo vw_SpecificationIngredientRule V  NULL 39F09977718720384799525BB50FD4BD87A66786E82250A89595DE13E3C62A85
+TARGET_MODULE teabar_api usp_AdjustStock P  NULL 6B938CD5A446B29B614D477BCB2F5DE5C034744B6AB7617003887DA29C58379F
+TARGET_MODULE teabar_api usp_AdvanceOrder P  NULL A6D8F203012733BB7949C3B1860BA6403619BBA95400B86AF8940054FD8BE102
+TARGET_MODULE teabar_api usp_FindMember P  NULL 92C8C08431E3C3799D1C7452F2AF712E2E509ADB6002DF68AB2AE9B91727C114
+TARGET_MODULE teabar_api usp_PlacePaidOrder P  NULL F8E7215864EF16816D5108782AF1486F1F4AEE5DF975B83787088CB65B5E94DA
+TARGET_MODULE teabar_api usp_PlacePaidOrderJson P  NULL 986D0D3530ECD4CBAB72B372B339336E88BF6AED2D523A7B9256E7B68E31B31A
+TARGET_MODULE teabar_api usp_RefundOrder P  NULL E0533A5D6529FD522BE6F8ED8FE8D3B21839795283B924D06B5275269840791D
+TARGET_MODULE teabar_api usp_SaveAddOn P  NULL 1862BC0564B5A26B87B2A7CD0519B5B69C06B229877BFBB19FBAEEE7CE147FE4
+TARGET_MODULE teabar_api usp_SaveDutyRoster P  NULL A68872B52372F405E1C80C8941F10A3DA0336471C7CC959DC8201155A11F6A6A
+TARGET_MODULE teabar_api usp_SaveEmployee P  NULL 8DB31B7283276A548262FD2E77E7F381F11C1E8EFDED4475161CBE9EC055B48C
+TARGET_MODULE teabar_api usp_SaveIngredient P  NULL 73528EED1F9F79FA7CD61EA95DAE17E8624E342AB926A386C01712B0ED90C1F8
+TARGET_MODULE teabar_api usp_SaveMember P  NULL 41C69A47EBB7D3A10E4B2E143DFCFF2BDD3D37496573FBA76BE658F105E14B35
+TARGET_MODULE teabar_api usp_SaveProduct P  NULL CDC0DD2307E70418F961255018B05A347BE277DC120F5D3ADA3DBA23B5571DED
+TARGET_MODULE teabar_api usp_SaveProductSpecification P  NULL D7C54E8C3B1A012E8E5126AC6B977EB4F90CE96237165AAB2EA5740E0699C19F
+TARGET_MODULE teabar_api usp_SaveRecipe P  NULL 656019428D3BAB498F8D5DDCD6D5EEEE2FDA3C2CB07B4481D875B503F184AD81
+TARGET_MODULE teabar_api usp_SaveSpecification P  NULL B17C226E0DC5816C23A6D3465F0614D63EF869922C3844B4D7A5C957542FEC7E
+TARGET_MODULE teabar_api usp_SaveSpecificationIngredient P  NULL F21AAFA50BF363B18F9BE8423FF5CD5F6FE76831AEBBB29CFDD59C615FD95869
+TARGET_MODULE teabar_api vw_AvailableAddOns V  NULL CB153A5DD1216F4DEB9CD79FFA3B441E98AE9616E2A62CBB8A6F47A838962779
+TARGET_MODULE teabar_api vw_AvailableSpecifications V  NULL ACD930E7DE90AFB4D0456E99C4D09B9CB2FEFF12D73B8E19414EB236CB92F735
+TARGET_MODULE teabar_api vw_DailySales V  NULL 5D624DA13F38D3D13A2BBEC082D61200159D1BD67FA8113B2D30FC2D46A05E49
+TARGET_MODULE teabar_api vw_Menu V  NULL F1063606EF45BDA0EE945CF708E11FBD88306A7A5EF0C8FB96CFB7889E33E849
+TARGET_MODULE teabar_api vw_MyItemAddOns V  NULL 2523C6BDFB9E6A8BB909F3740B95DA563ADC122E41674E2B243F221EE17CBE5A
+TARGET_MODULE teabar_api vw_MyItemSpecs V  NULL B369BD42CAF65CAEDA9824696BAF5807511C34BF13BA2298855E5965A5D0F567
+TARGET_MODULE teabar_api vw_MyMember V  NULL 9B5401AB5BECFFCFCB1339E8BD85A1D4A1BDB27762B31307BD744C4676501C9F
+TARGET_MODULE teabar_api vw_MyOrderItems V  NULL 4BA3D1ECD5FEC47C6A46D64301B073133D16FC18113C9B089B61CFEF8FFF68DB
+TARGET_MODULE teabar_api vw_MyOrders V  NULL 0CBABE5B748313543132E8AEE3D0384E58E2386B40F60174F63474D1F232CFEB
+TARGET_MODULE teabar_api vw_ProductSales V  NULL 083601D72018C2DE24229174D55A23AB626925823898C9A8AC849B23212CD3D6
+TARGET_MODULE teabar_api vw_WorkConsumption V  NULL 95635E3F8B09566011BB9E3D6CEA7E95285968904F54A220584E47C754776878
+TARGET_MODULE teabar_api vw_WorkItemAddOns V  NULL CA80B9D1249C00C3DDA9470278B2366B5782E2E4D57AB438525433260DF092B7
+TARGET_MODULE teabar_api vw_WorkItemSpecs V  NULL 43300FD9DEBAAAFF04B665B07C196F24E9A91103FB366AE0E03561C3154FC9B9
+TARGET_MODULE teabar_api vw_WorkOrderItems V  NULL 197A94F2B9D5F74FFD19B4BDA31EFD74D7E96D3714B451637811E3D906A5AE88
+TARGET_MODULE teabar_api vw_WorkOrders V  NULL 4E92D9D2675E2A7564C925923A61FBA56DB6969987038E30BC0E21C03C45BFC1
+TARGET_MODULE teabar_api vw_WorkTeam V  NULL 5F7E1790B46B7414DC577E2D2312FB6A1BD3A7F41C9E4A6CC0E5E4B0156F8ADF
+TARGET_MODULE teabar_auth fn_CurrentIdentity IF NULL CE57CC1478D73C71CA19E729768A885DDBF9BFF30031AD6965D803FE86CBB55E
+TARGET_MODULE teabar_auth usp_GetWebContext P  NULL 9A125EA0D486C95831BC1E2565C913095001463FB4614CAEBC6177B4C5D97BD6
+TARGET_MODULE teabar_auth usp_GetWebCredential P  NULL 863AB0B540CE9EC0952122E58FB3BB46D8D9710E1FE10EF54AE0E065EA73145C
+stage schema_name procedure_name parameter_id name type_schema type_name max_length precision scale is_output is_readonly
+----- ----------- -------------- ------------ ---- ----------- --------- ---------- --------- ----- --------- -----------
+TARGET_PARAMETER teabar_api usp_AdjustStock 1 @ingredient_id sys varchar 10 0 0 0 0
+TARGET_PARAMETER teabar_api usp_AdjustStock 2 @operation sys nvarchar 20 0 0 0 0
+TARGET_PARAMETER teabar_api usp_AdjustStock 3 @amount sys decimal 9 10 2 0 0
+TARGET_PARAMETER teabar_api usp_AdvanceOrder 1 @order_id sys varchar 10 0 0 0 0
+TARGET_PARAMETER teabar_api usp_AdvanceOrder 2 @next_status sys nvarchar 40 0 0 0 0
+TARGET_PARAMETER teabar_api usp_FindMember 1 @phone sys varchar 20 0 0 0 0
+TARGET_PARAMETER teabar_api usp_PlacePaidOrder 1 @order_id sys varchar 10 0 0 0 0
+TARGET_PARAMETER teabar_api usp_PlacePaidOrder 2 @items teabar_api OrderLines -1 0 0 0 1
+TARGET_PARAMETER teabar_api usp_PlacePaidOrder 3 @specs teabar_api OrderSpecs -1 0 0 0 1
+TARGET_PARAMETER teabar_api usp_PlacePaidOrder 4 @addons teabar_api OrderAddOns -1 0 0 0 1
+TARGET_PARAMETER teabar_api usp_PlacePaidOrder 5 @payment_succeeded sys bit 1 1 0 0 0
+TARGET_PARAMETER teabar_api usp_PlacePaidOrderJson 1 @order_id sys nvarchar -1 0 0 0 0
+TARGET_PARAMETER teabar_api usp_PlacePaidOrderJson 2 @items_json sys nvarchar -1 0 0 0 0
+TARGET_PARAMETER teabar_api usp_PlacePaidOrderJson 3 @specs_json sys nvarchar -1 0 0 0 0
+TARGET_PARAMETER teabar_api usp_PlacePaidOrderJson 4 @addons_json sys nvarchar -1 0 0 0 0
+TARGET_PARAMETER teabar_api usp_PlacePaidOrderJson 5 @payment_succeeded sys bit 1 1 0 0 0
+TARGET_PARAMETER teabar_api usp_RefundOrder 1 @order_id sys varchar 10 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveAddOn 1 @addon_id sys varchar 10 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveAddOn 2 @addon_name sys nvarchar 100 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveAddOn 3 @price sys decimal 9 10 2 0 0
+TARGET_PARAMETER teabar_api usp_SaveAddOn 4 @ingredient_id sys varchar 10 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveAddOn 5 @extra_amount sys decimal 9 10 2 0 0
+TARGET_PARAMETER teabar_api usp_SaveAddOn 6 @status sys nvarchar 20 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveDutyRoster 1 @duty_id sys varchar 10 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveDutyRoster 2 @employee_id sys varchar 10 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveDutyRoster 3 @start_time sys datetime2 6 19 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveDutyRoster 4 @end_time sys datetime2 6 19 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveEmployee 1 @employee_id sys varchar 10 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveEmployee 2 @name sys nvarchar 100 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveEmployee 3 @status sys nvarchar 20 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveEmployee 4 @salary sys decimal 9 10 2 0 0
+TARGET_PARAMETER teabar_api usp_SaveEmployee 5 @role sys nvarchar 40 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveIngredient 1 @ingredient_id sys varchar 10 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveIngredient 2 @ingredient_name sys nvarchar 100 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveIngredient 3 @unit sys nvarchar 20 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveIngredient 4 @status sys nvarchar 20 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveMember 1 @member_id sys varchar 10 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveMember 2 @name sys nvarchar 100 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveMember 3 @phone sys varchar 20 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveProduct 1 @product_id sys varchar 10 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveProduct 2 @product_name sys nvarchar 100 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveProduct 3 @base_price sys decimal 9 10 2 0 0
+TARGET_PARAMETER teabar_api usp_SaveProduct 4 @status sys nvarchar 20 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveProduct 5 @description sys nvarchar 400 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveProductSpecification 1 @product_id sys varchar 10 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveProductSpecification 2 @spec_id sys varchar 10 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveProductSpecification 3 @price_delta sys decimal 9 10 2 0 0
+TARGET_PARAMETER teabar_api usp_SaveProductSpecification 4 @status sys nvarchar 20 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveRecipe 1 @product_id sys varchar 10 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveRecipe 2 @ingredient_id sys varchar 10 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveRecipe 3 @base_amount sys decimal 9 10 2 0 0
+TARGET_PARAMETER teabar_api usp_SaveRecipe 4 @remove sys bit 1 1 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveSpecification 1 @spec_id sys varchar 10 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveSpecification 2 @spec_type sys nvarchar 40 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveSpecification 3 @spec_name sys nvarchar 40 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveSpecificationIngredient 1 @product_id sys varchar 10 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveSpecificationIngredient 2 @spec_id sys varchar 10 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveSpecificationIngredient 3 @ingredient_id sys varchar 10 0 0 0 0
+TARGET_PARAMETER teabar_api usp_SaveSpecificationIngredient 4 @factor sys decimal 5 5 2 0 0
+TARGET_PARAMETER teabar_api usp_SaveSpecificationIngredient 5 @remove sys bit 1 1 0 0 0
+TARGET_PARAMETER teabar_auth usp_GetWebContext 1 @account_id sys int 4 10 0 0 0
+TARGET_PARAMETER teabar_auth usp_GetWebContext 2 @session_version sys int 4 10 0 0 0
+TARGET_PARAMETER teabar_auth usp_GetWebCredential 1 @login_name sys nvarchar -1 0 0 0 0
+stage role_name member_name
+----- --------- -----------
+TARGET_ROLE_MEMBER teabar_clerk demo_clerk
+TARGET_ROLE_MEMBER teabar_customer demo_guest_a
+TARGET_ROLE_MEMBER teabar_customer demo_guest_b
+TARGET_ROLE_MEMBER teabar_manager demo_manager
+TARGET_ROLE_MEMBER teabar_member demo_member_a
+TARGET_ROLE_MEMBER teabar_member demo_member_b
+stage grantee state_desc permission_name schema_name object_name
+----- ------- ---------- --------------- ----------- -----------
+TARGET_NEW_PERMISSION teabar_customer GRANT EXECUTE teabar_api usp_PlacePaidOrderJson
+TARGET_NEW_PERMISSION teabar_member GRANT EXECUTE teabar_api usp_PlacePaidOrderJson

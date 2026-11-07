@@ -1,0 +1,13 @@
+Post-execution static validation of final sources; parser step is filesystem-only.
+Static parser: TSql160Parser; files: 16; distinct embedded SQL batches: 193; parse errors: 0. No SQL was executed.
+Deterministic regeneration: PASS (7 generated files).
+Frozen first-phase SQL matches v0.1: PASS (9 files; CRLF/LF normalized).
+Local Markdown links: 203 checked; 0 missing.
+Generated SHA-256:
+database\migrations\v0.1-to-v1.0\migration.sql 4b79eaf1bc70f90714cb244cd1aaf9ac36b8ac57b492a1f2d7bc779efb34ee4f
+database\migrations\v0.1-to-v1.0\modules\usp_PlacePaidOrder.sql 7f02ccc44f9fa77e4e3da1d6c91be46482cfce698f88235979f35746b4ab7c91
+database\regression\regression.sql acfab822969ee9129056338eab6e4637b6e8b558f2ca7c8fc81af59604dee111
+database\regression\legacy-constraint-tests.sql 75c4d7ff9604b394b5b7dd0814df2aba5139847c9c9ac3a25355233d27aa7ea9
+database\regression\legacy-role-tests.sql 87d6040bf19404eb043b978d5220ba1aa28215891540b5b0e76e5490fc38ddbb
+database\regression\verify-rollback.sql 4f88c833f0a562b9992ec7ba1260edf581cca9a212a1acaa991e4da4641833ff
+database\regression\source-integrity.sql d3ee60345cc9a8d3a40e8246e271df35d270ab3f16c29af60700e8b162bfca01

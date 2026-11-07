@@ -1,0 +1,14 @@
+﻿已将数据库上下文更改为 "master"。
+mode source_database work_database backup_file data_logical_name log_logical_name work_data_file work_log_file
+---- --------------- ------------- ----------- ----------------- ---------------- -------------- -------------
+EXECUTION_REQUESTED TeabarDB TeabarDB_Phase2_Work C:\Program Files\Microsoft SQL Server\MSSQL17.MSSQLSERVER\MSSQL\Backup\TeabarDB_v01_472239805CC14FABB2EB43D3982A8002.bak TeabarDB TeabarDB_log C:\Program Files\Microsoft SQL Server\MSSQL17.MSSQLSERVER\MSSQL\DATA\\TeabarDB_Phase2_Work_472239805CC14FABB2EB43D3982A8002.mdf C:\Program Files\Microsoft SQL Server\MSSQL17.MSSQLSERVER\MSSQL\DATA\\TeabarDB_Phase2_Work_472239805CC14FABB2EB43D3982A8002.ldf
+已为数据库 'TeabarDB'，文件 'TeabarDB' (位于文件 1 上)处理了 904 页。
+已为数据库 'TeabarDB'，文件 'TeabarDB_log' (位于文件 1 上)处理了 2 页。
+BACKUP DATABASE 成功处理了 906 页，花费 0.081 秒(87.336 MB/秒)。
+文件 1 上的备份集有效。
+已为数据库 'TeabarDB_Phase2_Work'，文件 'TeabarDB' (位于文件 1 上)处理了 904 页。
+已为数据库 'TeabarDB_Phase2_Work'，文件 'TeabarDB_log' (位于文件 1 上)处理了 2 页。
+RESTORE DATABASE 成功处理了 906 页，花费 0.052 秒(136.042 MB/秒)。
+result work_database recovery_backup
+------ ------------- ---------------
+WORK_COPY_RESTORED_KEEP_BACKUP TeabarDB_Phase2_Work C:\Program Files\Microsoft SQL Server\MSSQL17.MSSQLSERVER\MSSQL\Backup\TeabarDB_v01_472239805CC14FABB2EB43D3982A8002.bak

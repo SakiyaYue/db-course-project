@@ -1,0 +1,16 @@
+﻿database_name tables columns foreign_keys primary_keys unique_keys
+------------- ------ ------- ------------ ------------ -----------
+TeabarDB_Phase2_Work 17 81 19 17 8
+name version
+---- -------
+TeabarDB.SchemaVersion 1.0
+web_accounts
+------------
+0
+name
+----
+remaining_transactions
+----------------------
+0
+name
+----

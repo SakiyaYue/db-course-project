@@ -1,0 +1,17 @@
+Static audit date: 2026-11-07
+Scope: filesystem only; no SQL connection or execution.
+Deterministic regeneration: PASS (6 generated files)
+Root first-phase SQL unchanged against v0.1: PASS (9 files; CRLF/LF normalized)
+Source column manifest vs saved v0.1 catalog: PASS (74 columns; sysname alias normalized)
+Regression cases written: 44 legacy constraints + 84 legacy role/business + 53 new + 3 aggregate = 184; NOT EXECUTED
+Local Markdown links checked: 162; missing: 0
+Migration defaults: CommitMigration=0; InjectFailure=0
+Frozen v0.1 commit: 103efdfbc9264c3ecdcc8bd27bf5e8c437dd87c7
+Generated file SHA-256:
+database\migrations\v0.1-to-v1.0\migration.sql be64db337eaa353cc4bc23f5088df8303b0e72d248713277e0a55ca7b826c184
+database\migrations\v0.1-to-v1.0\modules\usp_PlacePaidOrder.sql 7f02ccc44f9fa77e4e3da1d6c91be46482cfce698f88235979f35746b4ab7c91
+database\regression\regression.sql 8a69e320889b3e5c184aba26973e1406d16957eabeccb3c581db3cab4c211f25
+database\regression\legacy-constraint-tests.sql 75c4d7ff9604b394b5b7dd0814df2aba5139847c9c9ac3a25355233d27aa7ea9
+database\regression\legacy-role-tests.sql 87d6040bf19404eb043b978d5220ba1aa28215891540b5b0e76e5490fc38ddbb
+database\regression\verify-rollback.sql e05dd4278d7df195dd0f82d17f66af3c37a2f06b059274183e4860dd9df02da6
+Static parser: TSql160Parser; files: 13; distinct embedded SQL batches: 192; parse errors: 0. No SQL was executed.

@@ -1,0 +1,15 @@
+﻿measure frozen_source_value migrated_value
+------- ------------------- --------------
+2026-10-04 amount 46.00 46.00
+2026-10-04 completed orders 3 3
+2026-10-04 cups 5 5
+I001 stock 5000.00 5000.00
+Ingredient rows 9 9
+M001 points 120 120
+OrderItem rows 7 7
+P001 base_price 6.00 6.00
+Product rows 4 4
+SalesOrder rows 5 5
+result matched_measures
+------ ----------------
+KEY_QUERY_COMPARE_PASSED 10

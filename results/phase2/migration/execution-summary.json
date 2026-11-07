@@ -1,0 +1,133 @@
+{
+  "date": "2026-11-07",
+  "authorization": "Explicit user approval: only the independent work copy; backup source is TeabarDB.",
+  "instance": "localhost",
+  "source_database": "TeabarDB",
+  "work_database": "TeabarDB_Phase2_Work",
+  "work_schema_version": "1.0",
+  "target": {
+    "tables": 17,
+    "columns": 81,
+    "foreign_keys": 19,
+    "primary_keys": 17,
+    "unique_constraints": 8,
+    "web_accounts": 0,
+    "web_users_or_app_user_persisted": 0
+  },
+  "backup_file": "C:\\Program Files\\Microsoft SQL Server\\MSSQL17.MSSQLSERVER\\MSSQL\\Backup\\TeabarDB_v01_472239805CC14FABB2EB43D3982A8002.bak",
+  "operations": [
+    {
+      "operation": "source_before",
+      "sqlcmd_exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "operation": "copy_only_restore",
+      "sqlcmd_exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "operation": "migration_dry_run",
+      "sqlcmd_exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "operation": "verify_dry_run",
+      "sqlcmd_exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "operation": "injected_failure_52809",
+      "sqlcmd_exit": 1,
+      "expected_exit": 1
+    },
+    {
+      "operation": "verify_failure",
+      "sqlcmd_exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "operation": "migration_commit",
+      "sqlcmd_exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "operation": "regression",
+      "sqlcmd_exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "operation": "source_after",
+      "sqlcmd_exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "operation": "target_summary",
+      "sqlcmd_exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "operation": "key_query_compare",
+      "sqlcmd_exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "operation": "target_object_capture",
+      "sqlcmd_exit": 0,
+      "expected_exit": 0
+    }
+  ],
+  "regression": {
+    "total": 184,
+    "passed": 184,
+    "failed": 0,
+    "legacy_constraint": 44,
+    "legacy_role": 84,
+    "v1_new": 53,
+    "aggregate": 3
+  },
+  "integrity": {
+    "source_report_before_after_identical": true,
+    "source_tables_hashes_match_dry_run_and_failure_rollback": 16,
+    "work_security_before_after_equal": true,
+    "work_security_hash": "7C0B7195699F055FEB1D88E17193D19B256C1DB61A50A3DEDF628947A4C156E5",
+    "key_metrics_matching": 10,
+    "business_rows": 232,
+    "principal_binding_rows": 4,
+    "sample_completed_orders": 3,
+    "sample_cups": 5,
+    "sample_amount": "46.00"
+  },
+  "execution_inputs_sha256": {
+    ".local-work-copy.run": "ca6d533560f995b58692b9a9e1c2b7f501b3798c501a48d416c6553c08c09b27",
+    ".local-injected.run": "95c83e7dacd2a0c47665b913b61a77646ab8b2deaa12abdda487dfc2783f7073",
+    ".local-commit.run": "fcc556fcc6d647f9bb8f7235c4fbfcb28cb34cd515c63b3f7977398b4657d381"
+  },
+  "evidence_sha256": {
+    "00-source-before.txt": "27792984857ed9a94cc302a4faf61645aeb5e99777485362ccbea210fd96ecb2",
+    "00-work-copy.txt": "6363160cc7da0b3e620d855ece7c71ad2c1b316723a205292fa0c0a020b26813",
+    "01-dry-run.txt": "5d2b1cdac100b81e53c50b0510249d93d03862bcb627fbb763bce2133f47d890",
+    "02-verify-dry-run.txt": "95f2a7388dcf0aad9cfcc6945f6e0c457423910f052e98abf536961850a3163a",
+    "03-injected-failure.txt": "4d1f4d3f09020f88f1da535ebadca0650f999facbe9b884bfd7fa9305e1209d8",
+    "04-verify-failure.txt": "95f2a7388dcf0aad9cfcc6945f6e0c457423910f052e98abf536961850a3163a",
+    "05-migration-commit.txt": "fe70ade3050bb8f4a5adaaed3e1bda2d0756148aba634247bd3784b657693cd6",
+    "06-regression.txt": "a96234243e7ac78d4364d98e7b61ccdf42b00b068f0b709cae72e509d8912ec4",
+    "07-source-after.txt": "27792984857ed9a94cc302a4faf61645aeb5e99777485362ccbea210fd96ecb2",
+    "08-target-summary.txt": "02024e7a9f8b5e2cc6885eb939a6c73319481f1efc3fd926d1ffa4a3051b0654",
+    "09-key-query-compare.txt": "cef5fdd05a550ef4ab093790f786919c5401df58908fefd7042b3904c236472c",
+    "10-target-objects.txt": "54b540c7c314cb377a9d4ab1781d00ed6340812772a1c6f8af0da248a90cca4e"
+  },
+  "failed_attempts_preserved": [
+    "attempts\\00-source-preflight-01.txt",
+    "attempts\\01-dry-run-01.txt",
+    "attempts\\06-regression-01.txt",
+    "attempts\\06-regression-02.txt",
+    "attempts\\06-regression-03.txt"
+  ],
+  "redaction": "Machine names in SQL Server error headers replaced with a local-instance placeholder. No changes to SQL errors or business results.",
+  "remaining": [
+    "Real restricted application login and permanent web account initialization",
+    "pyodbc / Flask integration and connection cleanup validation",
+    "Group B/C handoff and final report integration"
+  ]
+}

@@ -1,0 +1,5 @@
+result error_number detail transaction_state webaccount_after_rollback original_core_restored
+------ ------------ ------ ----------------- ------------------------- ----------------------
+MIGRATION_FAILED_ROLLED_BACK 52802 源库键/约束数量、名称、启用、信任或级联状态不符合基线。 1 NULL 1
+消息 52802，级别 16，状态 1，服务器 [本机实例]，第 319 行
+源库键/约束数量、名称、启用、信任或级联状态不符合基线。
