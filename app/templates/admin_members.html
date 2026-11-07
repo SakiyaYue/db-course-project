@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}会员 · Teabar{% endblock %}
+{% block content %}
+<h1>会员</h1>
+<section class="card">
+  <form method="get" action="{{ url_for('admin.members') }}" class="inline">
+    <input type="text" name="phone" value="{{ phone or '' }}" placeholder="按手机号查询">
+    <button type="submit">查询</button>
+  </form>
+  {% if member %}
+    <h2>{{ member.member_id }} · {{ member.name }}</h2>
+    <p>{{ member.phone }} · 积分 {{ member.points }}</p>
+  {% endif %}
+</section>
+<section class="card">
+  <h2>新增 / 修改会员</h2>
+  <form method="post" action="{{ url_for('admin.save_member') }}" class="form-row">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>会员编号 <input type="text" name="member_id" maxlength="10" required></label>
+    <label>姓名 <input type="text" name="name" maxlength="100" required></label>
+    <label>手机号 <input type="text" name="phone" maxlength="20" required></label>
+    <button type="submit" class="primary">保存</button>
+  </form>
+</section>
+{% endblock %}

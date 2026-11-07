@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}订单 {{ order.order_id }} · 工作台{% endblock %}
+{% block content %}
+<section class="page-head">
+  <h1>订单 {{ order.order_id }}</h1>
+  <p class="muted">{{ order.order_time }} · ￥{{ order.total_amount }} · <span class="status">{{ order.status }}</span>
+    {% if order.member_id %}· 会员 {{ order.member_id }}{% endif %}</p>
+</section>
+<table class="table">
+  <thead><tr><th>明细</th><th>商品</th><th>数量</th><th>单价</th><th>小计</th></tr></thead>
+  <tbody>
+    {% for item in order.items %}
+      <tr>
+        <td>{{ item.item_id }}</td>
+        <td>{{ item.product_name_snapshot }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>￥{{ item.unit_price }}</td>
+        <td>￥{{ item.sub_amount }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<div class="columns">
+  <section class="card">
+    <h2>规格</h2>
+    <ul class="plain">
+      {% for spec in order.specs %}<li>{{ spec.item_id }} · {{ spec.spec_type }}：{{ spec.spec_name_snapshot }}</li>{% endfor %}
+    </ul>
+  </section>
+  <section class="card">
+    <h2>加料</h2>
+    <ul class="plain">
+      {% for addon in order.addons %}<li>{{ addon.item_id }} · {{ addon.addon_name_snapshot }}</li>{% else %}<li class="muted">无</li>{% endfor %}
+    </ul>
+  </section>
+  <section class="card">
+    <h2>原料消耗</h2>
+    <ul class="plain">
+      {% for row in order.consumption %}
+        <li>{{ row.ingredient_name }} · {{ row.amount }} {{ row.unit }}</li>
+      {% else %}
+        <li class="muted">无</li>
+      {% endfor %}
+    </ul>
+  </section>
+</div>
+{% set flow = {'排队中': '制作中', '制作中': '待取餐', '待取餐': '已完成'} %}
+{% if order.status in flow %}
+  <form method="post" action="{{ url_for('work.advance', order_id=order.order_id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="next_status" value="{{ flow[order.status] }}">
+    <button type="submit" class="primary">推进到「{{ flow[order.status] }}」</button>
+  </form>
+{% endif %}
+<p><a href="{{ url_for('work.orders') }}">返回工作台</a></p>
+{% endblock %}

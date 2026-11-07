@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}统计 · Teabar{% endblock %}
+{% block content %}
+<h1>营业统计</h1>
+<section class="card">
+  <h2>按日销售（仅已完成订单）</h2>
+  <table class="table">
+    <thead><tr><th>日期</th><th>订单数</th><th>销售额</th></tr></thead>
+    <tbody>
+      {% for row in daily %}
+        <tr><td>{{ row.sale_date }}</td><td>{{ row.order_count }}</td><td>￥{{ row.sales_amount }}</td></tr>
+      {% else %}
+        <tr><td colspan="3" class="muted">暂无数据。</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+<section class="card">
+  <h2>按商品销售</h2>
+  <table class="table">
+    <thead><tr><th>商品</th><th>名称</th><th>杯数</th><th>销售额</th></tr></thead>
+    <tbody>
+      {% for row in products %}
+        <tr><td>{{ row.product_id }}</td><td>{{ row.product_name }}</td><td>{{ row.cups_sold }}</td><td>￥{{ row.sales_amount }}</td></tr>
+      {% else %}
+        <tr><td colspan="4" class="muted">暂无数据。</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

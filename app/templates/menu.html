@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}菜单 · Teabar{% endblock %}
+{% block content %}
+<section class="page-head">
+  <h1>菜单</h1>
+  {% if role in ('customer', 'member') %}
+    <a class="button primary" href="{{ url_for('menu.checkout') }}">去点单</a>
+  {% endif %}
+</section>
+<div class="grid">
+  {% for product in catalog.products %}
+    <article class="card product">
+      <h2>{{ product.product_name }}</h2>
+      <p class="price">￥{{ product.base_price }}</p>
+      {% if product.description %}<p class="muted">{{ product.description }}</p>{% endif %}
+      <dl>
+        {% for spec_type, specs in product.spec_types.items() %}
+          <dt>{{ spec_type }}</dt>
+          <dd>
+            {% for spec in specs %}
+              <span class="chip">{{ spec.spec_name }}{% if spec.price_delta != '0.00' %} +{{ spec.price_delta }}{% endif %}</span>
+            {% endfor %}
+          </dd>
+        {% endfor %}
+      </dl>
+    </article>
+  {% endfor %}
+</div>
+{% if catalog.addons %}
+<section class="card">
+  <h2>可选加料</h2>
+  <ul class="chips">
+    {% for addon in catalog.addons %}
+      <li class="chip">{{ addon.addon_name }} +{{ addon.price }}</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% endblock %}

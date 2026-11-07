@@ -1,0 +1,9 @@
+﻿healthz 200
+anon_menu 302 /login?next=/menu
+login 302 /menu
+menu 200
+me customer web_guest_a 7
+my_orders 0
+logout 302
+SMOKE_READONLY_PASSED
+

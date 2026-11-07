@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}库存 · Teabar{% endblock %}
+{% block content %}
+<h1>原料库存</h1>
+<table class="table">
+  <thead><tr><th>编号</th><th>名称</th><th>库存</th><th>单位</th><th>状态</th></tr></thead>
+  <tbody>
+    {% for row in ingredients %}
+      <tr><td>{{ row.ingredient_id }}</td><td>{{ row.ingredient_name }}</td><td>{{ row.stock }}</td><td>{{ row.unit }}</td><td>{{ row.status }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+<section class="card">
+  <h2>补库 / 盘点</h2>
+  <form method="post" action="{{ url_for('admin.adjust_stock') }}" class="form-row">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>原料编号 <input type="text" name="ingredient_id" maxlength="10" required></label>
+    <label>操作
+      <select name="operation">
+        <option value="补库">补库</option>
+        <option value="盘点">盘点</option>
+      </select>
+    </label>
+    <label>数量 <input type="text" name="amount" required></label>
+    <button type="submit" class="primary">提交</button>
+  </form>
+</section>
+{% endblock %}

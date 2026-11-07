@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}员工 · Teabar{% endblock %}
+{% block content %}
+<h1>员工</h1>
+<table class="table">
+  <thead><tr><th>编号</th><th>姓名</th><th>角色</th><th>状态</th><th>薪资</th></tr></thead>
+  <tbody>
+    {% for row in rows %}
+      <tr><td>{{ row.employee_id }}</td><td>{{ row.name }}</td><td>{{ row.role }}</td><td>{{ row.status }}</td><td>￥{{ row.salary }}</td></tr>
+    {% else %}
+      <tr><td colspan="5" class="muted">暂无员工。</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

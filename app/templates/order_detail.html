@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}订单 {{ order.order_id }} · Teabar{% endblock %}
+{% block content %}
+<section class="page-head">
+  <h1>订单 {{ order.order_id }}</h1>
+  <p class="muted">{{ order.order_time }} · ￥{{ order.total_amount }} · <span class="status">{{ order.status }}</span></p>
+</section>
+<table class="table">
+  <thead><tr><th>明细</th><th>商品</th><th>数量</th><th>单价</th><th>小计</th></tr></thead>
+  <tbody>
+    {% for item in order.items %}
+      <tr>
+        <td>{{ item.item_id }}</td>
+        <td>{{ item.product_name_snapshot }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>￥{{ item.unit_price }}</td>
+        <td>￥{{ item.sub_amount }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<div class="columns">
+  <section class="card">
+    <h2>规格</h2>
+    <ul class="plain">
+      {% for spec in order.specs %}
+        <li>{{ spec.item_id }} · {{ spec.spec_type }}：{{ spec.spec_name_snapshot }}{% if spec.price_delta_snapshot != '0.00' %}（+{{ spec.price_delta_snapshot }}）{% endif %}</li>
+      {% else %}
+        <li class="muted">无</li>
+      {% endfor %}
+    </ul>
+  </section>
+  <section class="card">
+    <h2>加料</h2>
+    <ul class="plain">
+      {% for addon in order.addons %}
+        <li>{{ addon.item_id }} · {{ addon.addon_name_snapshot }}（+{{ addon.price_snapshot }}）</li>
+      {% else %}
+        <li class="muted">无</li>
+      {% endfor %}
+    </ul>
+  </section>
+</div>
+{% if order.status == '排队中' %}
+  <form method="post" action="{{ url_for('orders.refund', order_id=order.order_id) }}"
+        onsubmit="return confirm('确认退款该订单？');">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button type="submit" class="danger">退款</button>
+  </form>
+{% endif %}
+<p><a href="{{ url_for('orders.my_orders') }}">返回我的订单</a></p>
+{% endblock %}

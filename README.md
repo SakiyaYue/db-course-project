@@ -6,6 +6,14 @@
 
 2026-11-07：组员A已完成独立工作库TeabarDB_Phase2_Work的v1.0迁移，184/184回归通过，冻结源TeabarDB保持v0.1。见[实测结果与限制](docs/phase2/06-normalization/迁移前后结果与已知限制.md)。以下安装顺序仍为冻结v0.1，不能用于覆盖v1.0工作库。
 
+2026-11-07：组员B已完成第二阶段 Web 应用（Flask + Jinja2 + pyodbc），31 项 pytest 通过，本地工作库与独立测试库 `TeabarDB_Phase2_Test` 均可运行。应用入口、演示账号、初始化脚本与已知限制见 [Web 应用说明](docs/phase2/07-web/README.md)；运行前需先初始化 Web 账号：
+
+```powershell
+python database\admin\init_web_accounts.py --database TeabarDB_Phase2_Work
+Copy-Item .env.example .env   # 按本机修改，真实 .env 不提交
+python run.py                 # http://127.0.0.1:5000
+```
+
 ## 项目范围
 
 本项目使用 SQL Server 实现单个奶茶门店的销售与管理数据库，覆盖商品、配方、原料库存、温度／糖度／杯型、加料、订单与明细、会员、员工和值班，以及经营查询和统计视图。

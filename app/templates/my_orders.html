@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}我的订单 · Teabar{% endblock %}
+{% block content %}
+<section class="page-head">
+  <h1>我的订单</h1>
+  {% if member %}<p class="muted">{{ member.name }} · 积分 {{ member.points }}</p>{% endif %}
+</section>
+{% if orders %}
+<table class="table">
+  <thead><tr><th>订单号</th><th>下单时间</th><th>金额</th><th>状态</th><th></th></tr></thead>
+  <tbody>
+    {% for order in orders %}
+      <tr>
+        <td><a href="{{ url_for('orders.order_detail', order_id=order.order_id) }}">{{ order.order_id }}</a></td>
+        <td>{{ order.order_time }}</td>
+        <td>￥{{ order.total_amount }}</td>
+        <td><span class="status">{{ order.status }}</span></td>
+        <td>
+          {% if order.status == '排队中' %}
+            <form method="post" action="{{ url_for('orders.refund', order_id=order.order_id) }}" class="inline"
+                  onsubmit="return confirm('确认退款该订单？');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="link danger">退款</button>
+            </form>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="muted">还没有订单，去<a href="{{ url_for('menu.menu') }}">菜单</a>点一杯吧。</p>
+{% endif %}
+{% endblock %}

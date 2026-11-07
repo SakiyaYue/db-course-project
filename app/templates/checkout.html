@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}点单 · Teabar{% endblock %}
+{% block content %}
+<section class="card narrow">
+  <h1>点单</h1>
+  <form method="post" action="{{ url_for('orders.create_order') }}" id="checkout-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>商品
+      <select name="product_id" id="product-select" required>
+        {% for product in catalog.products %}
+          <option value="{{ product.product_id }}" data-price="{{ product.base_price }}">{{ product.product_name }} · ￥{{ product.base_price }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>数量
+      <input type="number" name="quantity" id="quantity" value="1" min="1" max="99" required>
+    </label>
+    <div id="specs"></div>
+    <fieldset id="addons">
+      <legend>加料</legend>
+      {% for addon in catalog.addons %}
+        <label class="inline">
+          <input type="checkbox" name="addon_id" value="{{ addon.addon_id }}">
+          {{ addon.addon_name }} +{{ addon.price }}
+        </label>
+      {% endfor %}
+    </fieldset>
+    <p class="muted">提交即模拟付款成功；初始状态为「排队中」。金额由数据库计算。</p>
+    <button type="submit" class="primary">提交订单</button>
+  </form>
+</section>
+<script id="catalog-data" type="application/json">{{ catalog | tojson }}</script>
+<script>
+  const catalog = JSON.parse(document.getElementById('catalog-data').textContent);
+  const select = document.getElementById('product-select');
+  const specs = document.getElementById('specs');
+  function renderSpecs() {
+    const product = catalog.products.find(p => p.product_id === select.value);
+    specs.innerHTML = '';
+    if (!product) return;
+    for (const [typeName, items] of Object.entries(product.spec_types)) {
+      const label = document.createElement('label');
+      label.textContent = typeName;
+      const sel = document.createElement('select');
+      sel.name = 'spec_id';
+      sel.required = true;
+      for (const item of items) {
+        const opt = document.createElement('option');
+        opt.value = item.spec_id;
+        opt.textContent = item.spec_name + (item.price_delta !== '0.00' ? ' +' + item.price_delta : '');
+        sel.appendChild(opt);
+      }
+      label.appendChild(sel);
+      specs.appendChild(label);
+    }
+  }
+  select.addEventListener('change', renderSpecs);
+  renderSpecs();
+</script>
+{% endblock %}

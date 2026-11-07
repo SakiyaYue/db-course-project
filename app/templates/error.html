@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ title or '出错了' }} · Teabar{% endblock %}
+{% block content %}
+<section class="card narrow">
+  <h1>{{ title or '出错了' }}</h1>
+  <p class="error">{{ message }}</p>
+  {% if detail %}<pre class="detail">{{ detail }}</pre>{% endif %}
+  <p><a href="{{ url_for('menu.index') }}">返回首页</a></p>
+</section>
+{% endblock %}

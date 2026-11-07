@@ -28,10 +28,24 @@
 !/results/**/*.txt
 !/results/**/*.csv
 
+# Phase 2 Web application (member B). Credentials stay local: `*` above keeps .env out.
+!/requirements.txt
+!/.env.example
+!/run.py
+!/pytest.ini
+!/app/**/*.py
+!/app/**/*.html
+!/app/**/*.css
+!/tests/**/*.py
+!/database/admin/*.py
+
 # Dependencies and temporary files stay local even inside allowed directories.
 node_modules/
 npm-debug.log*
 ~$*
+__pycache__/
+*.pyc
+.pytest_cache/
 
 # Course briefs stay local; the maintained phase checklist is a project deliverable.
 /NEW-TODO/*
