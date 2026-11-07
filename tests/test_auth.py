@@ -46,7 +46,7 @@ def test_logout_clears_session(client, login, csrf):
 
 def test_api_requires_login(client):
     assert client.get("/api/me").status_code == 401
-    assert client.get("/api/menu").status_code == 401
+    assert client.get("/api/menu").status_code == 200
 
 
 def test_post_requires_csrf(client):

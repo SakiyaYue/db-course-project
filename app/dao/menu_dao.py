@@ -6,11 +6,11 @@ import pyodbc
 
 
 def _rows(cursor: pyodbc.Cursor) -> list[dict]:
-    columns = [col[0] for col in cursor.description]
+    from .common import first_result
     result = []
-    for row in cursor.fetchall():
+    for row in first_result(cursor):
         item = {}
-        for name, value in zip(columns, row):
+        for name, value in row.items():
             if name.endswith("_price") or name in {"price", "base_price", "price_delta"}:
                 item[name] = f"{value:.2f}" if value is not None else None
             else:

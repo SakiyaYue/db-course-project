@@ -3,58 +3,108 @@
 {% block content %}
 <section class="card narrow">
   <h1>点单</h1>
+  {% if error %}<p role="alert" class="danger">{{ error }}</p>{% endif %}
   <form method="post" action="{{ url_for('orders.create_order') }}" id="checkout-form">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <label>商品
-      <select name="product_id" id="product-select" required>
-        {% for product in catalog.products %}
-          <option value="{{ product.product_id }}" data-price="{{ product.base_price }}">{{ product.product_name }} · ￥{{ product.base_price }}</option>
-        {% endfor %}
+    <input type="hidden" name="request_token" value="{{ request_token }}">
+    <input type="hidden" name="items_json" id="items-json" value="">
+    <div id="basket"></div>
+    <button type="button" id="add-item">添加一件商品</button>
+    <label>模拟付款结果
+      <select name="payment_succeeded" id="payment">
+        <option value="true" {% if payload.get('payment_succeeded', true) %}selected{% endif %}>付款成功</option>
+        <option value="false" {% if not payload.get('payment_succeeded', true) %}selected{% endif %}>付款失败（不创建订单）</option>
       </select>
     </label>
-    <label>数量
-      <input type="number" name="quantity" id="quantity" value="1" min="1" max="99" required>
-    </label>
-    <div id="specs"></div>
-    <fieldset id="addons">
-      <legend>加料</legend>
-      {% for addon in catalog.addons %}
-        <label class="inline">
-          <input type="checkbox" name="addon_id" value="{{ addon.addon_id }}">
-          {{ addon.addon_name }} +{{ addon.price }}
-        </label>
-      {% endfor %}
-    </fieldset>
-    <p class="muted">提交即模拟付款成功；初始状态为「排队中」。金额由数据库计算。</p>
-    <button type="submit" class="primary">提交订单</button>
+    <p class="muted">每单最多 20 条明细。成交金额由数据库计算，库存以提交结果为准。</p>
+    <button type="submit" class="primary" id="submit-order">提交订单</button>
+    <noscript><p>多商品结算需要启用 JavaScript；也可使用 JSON API。</p></noscript>
   </form>
 </section>
 <script id="catalog-data" type="application/json">{{ catalog | tojson }}</script>
+<script id="saved-data" type="application/json">{{ payload | tojson }}</script>
 <script>
+(() => {
   const catalog = JSON.parse(document.getElementById('catalog-data').textContent);
-  const select = document.getElementById('product-select');
-  const specs = document.getElementById('specs');
-  function renderSpecs() {
-    const product = catalog.products.find(p => p.product_id === select.value);
-    specs.innerHTML = '';
-    if (!product) return;
-    for (const [typeName, items] of Object.entries(product.spec_types)) {
-      const label = document.createElement('label');
-      label.textContent = typeName;
-      const sel = document.createElement('select');
-      sel.name = 'spec_id';
-      sel.required = true;
-      for (const item of items) {
-        const opt = document.createElement('option');
-        opt.value = item.spec_id;
-        opt.textContent = item.spec_name + (item.price_delta !== '0.00' ? ' +' + item.price_delta : '');
-        sel.appendChild(opt);
-      }
-      label.appendChild(sel);
-      specs.appendChild(label);
-    }
+  const saved = JSON.parse(document.getElementById('saved-data').textContent);
+  const basket = document.getElementById('basket');
+  const add = document.getElementById('add-item');
+  const form = document.getElementById('checkout-form');
+  function labeled(text, input, parent) {
+    const label = document.createElement('label');
+    label.append(document.createTextNode(text), input);
+    parent.append(label);
   }
-  select.addEventListener('change', renderSpecs);
-  renderSpecs();
+  function option(select, value, label) {
+    const el = document.createElement('option');
+    el.value = value;
+    el.textContent = label;
+    select.append(el);
+  }
+  function addRow(initial = {}) {
+    if (basket.children.length >= 20 || !catalog.products.length) return;
+    if (!initial || typeof initial !== 'object') initial = {};
+    const row = document.createElement('fieldset');
+    const legend = document.createElement('legend');
+    legend.textContent = '商品明细';
+    row.append(legend);
+    const product = document.createElement('select');
+    product.className = 'basket-product';
+    product.required = true;
+    for (const p of catalog.products) option(product, p.product_id, p.product_name + ' · ￥' + p.base_price);
+    if (catalog.products.some(p => p.product_id === initial.product_id)) product.value = initial.product_id;
+    labeled('商品', product, row);
+    const quantity = document.createElement('input');
+    quantity.className = 'basket-quantity';
+    quantity.type = 'number';
+    quantity.min = '1'; quantity.max = '99'; quantity.required = true;
+    quantity.value = initial.quantity === undefined ? '1' : String(initial.quantity);
+    labeled('数量', quantity, row);
+    const specs = document.createElement('div');
+    row.append(specs);
+    function renderSpecs(selected = []) {
+      specs.replaceChildren();
+      const p = catalog.products.find(p => p.product_id === product.value);
+      for (const [kind, choices] of Object.entries(p.spec_types)) {
+        const select = document.createElement('select');
+        select.className = 'basket-spec'; select.required = true;
+        for (const choice of choices) option(select, choice.spec_id, choice.spec_name + ' +' + choice.price_delta);
+        const match = choices.find(choice => selected.includes(choice.spec_id));
+        if (match) select.value = match.spec_id;
+        labeled(kind, select, specs);
+      }
+    }
+    renderSpecs(Array.isArray(initial.specs) ? initial.specs : []);
+    product.addEventListener('change', () => renderSpecs());
+    const addons = document.createElement('fieldset');
+    const caption = document.createElement('legend'); caption.textContent = '加料'; addons.append(caption);
+    for (const addon of catalog.addons) {
+      const check = document.createElement('input');
+      check.type = 'checkbox'; check.className = 'basket-addon'; check.value = addon.addon_id;
+      check.checked = Array.isArray(initial.addons) && initial.addons.includes(addon.addon_id);
+      labeled(addon.addon_name + ' +' + addon.price, check, addons);
+    }
+    row.append(addons);
+    const remove = document.createElement('button');
+    remove.type = 'button'; remove.textContent = '移除此商品';
+    remove.addEventListener('click', () => { row.remove(); add.disabled = false; });
+    row.append(remove); basket.append(row);
+    add.disabled = basket.children.length >= 20;
+  }
+  const savedItems = Array.isArray(saved.items) ? saved.items.slice(0, 20) : [];
+  if (savedItems.length) savedItems.forEach(addRow); else addRow();
+  add.addEventListener('click', () => addRow());
+  form.addEventListener('submit', event => {
+    const items = Array.from(basket.children).map(row => ({
+      product_id: row.querySelector('.basket-product').value,
+      quantity: Number(row.querySelector('.basket-quantity').value),
+      specs: Array.from(row.querySelectorAll('.basket-spec')).map(el => el.value),
+      addons: Array.from(row.querySelectorAll('.basket-addon:checked')).map(el => el.value)
+    }));
+    if (!items.length) { event.preventDefault(); alert('请至少添加一件商品。'); return; }
+    document.getElementById('items-json').value = JSON.stringify(items);
+    document.getElementById('submit-order').disabled = true;
+  });
+})();
 </script>
 {% endblock %}

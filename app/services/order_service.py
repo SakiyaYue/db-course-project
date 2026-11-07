@@ -3,8 +3,14 @@
 from __future__ import annotations
 
 import re
+import json
+import hashlib
+
+import pyodbc
 import secrets
 from decimal import Decimal
+
+from ..security import service_roles
 
 from ..dao import order_dao
 from ..errors import AppError, translate_db_error
@@ -41,6 +47,8 @@ def _require_quantity(value) -> int:
             raise AppError("invalid_quantity", "购买数量必须是正整数。", 400)
         value = int(value.strip())
     if isinstance(value, Decimal):
+        if not value.is_finite() or value != value.to_integral_value():
+            raise AppError("invalid_quantity", "购买数量必须是正整数。", 400)
         value = int(value)
     if not isinstance(value, int) or not 1 <= value <= MAX_QUANTITY:
         raise AppError("invalid_quantity", f"购买数量必须在 1–{MAX_QUANTITY} 之间。", 400)
@@ -106,13 +114,21 @@ def normalize_payload(payload: dict) -> dict:
     }
 
 
+@service_roles("customer", "member")
 def place_paid_order(conn, payload: dict) -> dict:
-    normalized = normalize_payload(payload)
+    normalize_payload(payload)  # Validate before any write.
+    token = payload.get("request_token")
+    if token is not None and (not isinstance(token, str) or not re.fullmatch(r"[A-Za-z0-9_-]{20,100}", token)):
+        raise AppError("invalid_request_token", "订单请求标识格式不正确。", 400)
+    digest = hashlib.sha256(json.dumps({"items": payload["items"], "payment_succeeded": payload.get("payment_succeeded", True)}, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()).hexdigest()
     # 订单/明细主键冲突时重试整组编号（接口约定：最多 3 次）
     last_error: Exception | None = None
     for _attempt in range(3):
+        normalized = normalize_payload(payload)
         order_id = new_order_id()
         try:
+            if token:
+                return order_dao.place_web_order(conn, token, digest, order_id, normalized["items"], normalized["specs"], normalized["addons"], normalized["payment_succeeded"])
             return order_dao.place_paid_order(
                 conn,
                 order_id,
@@ -123,7 +139,9 @@ def place_paid_order(conn, payload: dict) -> dict:
             )
         except Exception as exc:  # pyodbc.Error
             error = translate_db_error(exc)
-            if error.code == "duplicate_key":
+            if (isinstance(exc, pyodbc.IntegrityError) and error.code == "duplicate_key"
+                and re.search(r"\bPK_(?:SalesOrder|OrderItem)\b", str(exc), re.I)
+                and order_dao.transaction_count(conn) == 0):
                 last_error = exc
                 continue
             raise error from exc
@@ -131,24 +149,26 @@ def place_paid_order(conn, payload: dict) -> dict:
 
 
 def payload_from_form(form) -> dict:
-    """HTML 表单 → 订单载荷（单商品，多规格选择，多加料）。"""
-    product_id = form.get("product_id")
-    quantity = form.get("quantity", "1")
-    spec_ids = form.getlist("spec_id")
-    addon_ids = form.getlist("addon_id")
-    return {
-        "items": [
-            {
-                "product_id": product_id,
-                "quantity": quantity,
-                "specs": spec_ids,
-                "addons": addon_ids,
-            }
-        ],
-        "payment_succeeded": True,
-    }
+    """HTML basket JSON and the legacy single-product form."""
+    raw = form.get("items_json")
+    if raw is not None:
+        try:
+            items = json.loads(raw)
+        except (ValueError, TypeError) as exc:
+            raise AppError("invalid_items", "购物篮格式不正确。", 400) from exc
+    else:
+        items = [{"product_id": form.get("product_id"), "quantity": form.get("quantity", "1"),
+                  "specs": form.getlist("spec_id"), "addons": form.getlist("addon_id")}]
+    payment = form.get("payment_succeeded", "true")
+    if payment not in {"true", "false"}:
+        raise AppError("invalid_payment", "请选择模拟付款结果。", 400)
+    payload = {"items": items, "payment_succeeded": payment == "true"}
+    if form.get("request_token"):
+        payload["request_token"] = form.get("request_token")
+    return payload
 
 
+@service_roles("customer", "member")
 def list_my_orders(conn) -> list[dict]:
     try:
         return order_dao.list_my_orders(conn)
@@ -156,6 +176,7 @@ def list_my_orders(conn) -> list[dict]:
         raise translate_db_error(exc) from exc
 
 
+@service_roles("customer", "member")
 def get_order_detail(conn, order_id: str) -> dict:
     order = order_dao.get_my_order(conn, order_id)
     if order is None:
@@ -167,6 +188,7 @@ def get_order_detail(conn, order_id: str) -> dict:
     return detail
 
 
+@service_roles("customer", "member")
 def refund(conn, order_id: str) -> dict:
     if not ID_PATTERN.fullmatch(str(order_id or "")):
         raise AppError("invalid_id", "订单编号格式不正确。", 400)
@@ -176,6 +198,7 @@ def refund(conn, order_id: str) -> dict:
         raise translate_db_error(exc) from exc
 
 
+@service_roles("customer", "member")
 def get_my_member(conn) -> dict | None:
     try:
         return order_dao.get_my_member(conn)

@@ -26,11 +26,10 @@ def test_menu_page_renders(client, login):
         assert product["product_name"] in html
 
 
-def test_public_pages_redirect_when_anonymous(client):
-    response = client.get("/", follow_redirects=True)
+def test_anonymous_can_browse_menu_but_not_checkout(client):
+    response = client.get("/menu")
     assert response.status_code == 200
-    assert "登录" in response.get_data(as_text=True)
-    for path in ("/menu", "/orders/new"):
-        response = client.get(path, follow_redirects=False)
-        assert response.status_code == 302
-        assert "/login" in response.headers["Location"]
+    assert client.get("/api/menu").status_code == 200
+    response = client.get("/orders/new", follow_redirects=False)
+    assert response.status_code == 302
+    assert "/login" in response.headers["Location"]

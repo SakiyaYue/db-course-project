@@ -32,3 +32,13 @@ def load_catalog(conn) -> dict:
             }
         )
     return {"products": catalog, "addons": addons}
+
+
+def get_product_detail(conn, product_id: str) -> dict:
+    from ..errors import AppError
+
+    catalog = load_catalog(conn)
+    product = next((item for item in catalog["products"] if item["product_id"] == product_id), None)
+    if product is None:
+        raise AppError("product_not_found", "商品不存在或当前不可售。", 404)
+    return {"product": product, "addons": catalog["addons"]}

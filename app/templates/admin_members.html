@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}会员 · Teabar{% endblock %}
 {% block content %}
+{% set form_values = form_values|default({}) %}
 <h1>会员</h1>
 <section class="card">
   <form method="get" action="{{ url_for('admin.members') }}" class="inline">
@@ -16,9 +17,9 @@
   <h2>新增 / 修改会员</h2>
   <form method="post" action="{{ url_for('admin.save_member') }}" class="form-row">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <label>会员编号 <input type="text" name="member_id" maxlength="10" required></label>
-    <label>姓名 <input type="text" name="name" maxlength="100" required></label>
-    <label>手机号 <input type="text" name="phone" maxlength="20" required></label>
+    <label>会员编号 <input type="text" name="member_id" value="{{ form_values.get('member_id', '') }}" maxlength="10" required></label>
+    <label>姓名 <input type="text" name="name" value="{{ form_values.get('name', '') }}" maxlength="100" required></label>
+    <label>手机号 <input type="text" name="phone" value="{{ form_values.get('phone', '') }}" maxlength="20" required></label>
     <button type="submit" class="primary">保存</button>
   </form>
 </section>

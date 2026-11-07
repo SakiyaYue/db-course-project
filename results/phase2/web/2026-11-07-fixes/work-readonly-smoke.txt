@@ -1,0 +1,9 @@
+{"path": "/healthz", "status": 200}
+{"path": "/menu", "status": 200}
+{"path": "/api/menu", "status": 200}
+{"path": "/menu/P001", "status": 200}
+{"path": "/api/me", "status": 200}
+{"path": "/api/my/orders", "status": 200}
+{"path": "/my/orders", "status": 200}
+{"path": "/orders/new", "status": 200}
+{"result": "WORK_READONLY_SMOKE_PASSED", "before": {"orders": 5, "receipts": 0, "accounts": 6, "tables": 18, "foreign_keys": 20, "business_rows": 232}, "after": {"orders": 5, "receipts": 0, "accounts": 6, "tables": 18, "foreign_keys": 20, "business_rows": 232}, "source_unchanged": true}

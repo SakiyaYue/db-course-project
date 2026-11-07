@@ -1,76 +1,40 @@
-# 第二阶段 Web 应用（组员 B）
+# Phase2 B Web 后端
 
-2026-11-07。状态：**应用已可运行并完成 31 项 pytest 与端到端冒烟验证；真实受限 SQL 登录受本机实例仅 Windows 身份验证的限制，见[已知限制](已知限制与后续.md)。** 数据库侧沿用 [v1.0 接口约定](../06-normalization/v1.0数据库接口约定.md)，本地工作库已验证 184/184 回归。
+Flask + Jinja2 + pyodbc；登录、会话校验、匿名菜单与商品详情、多商品下单、本人订单/退款、店员状态推进、首次完成积分、店长统计/补库及会员资料维护已实现。
 
-## 快速开始
+本轮验收入口：[B 后端修复与验收](B后端修复与验收-2026-11-07.md)。当前限制见[已知限制](已知限制与后续.md)，给 C 的接口见[接口与模板约定](接口与模板约定-给C.md)。不将参考模板交付等同于 C 最终页面验收。
+
+## 空环境复现
+
+使用已安装 ODBC Driver 18 的 Python 环境：
 
 ```powershell
-# 1. 激活带 Flask/pyodbc/pytest 的环境（本机示例）
-D:\DevTools\Miniconda3\condabin\conda.bat activate DatabaseLab
-Set-Location D:\00_study_file_desktop\grade_3\grade_3_1\01 Principles of Database Systems\lab\db-course-project
-
-# 2. 初始化 Web 角色、无登录用户、身份绑定和演示账号（幂等，可 --dry-run）
-python database\admin\init_web_accounts.py --database TeabarDB_Phase2_Work
-
-# 3. 配置连接（复制模板后按本机修改；真实 .env 不提交）
+python -m pip install -r requirements.txt
+# 管理员仅在目标库尚不存在时运行；脚本拒绝覆盖，不删除源库。
+python database/admin/prepare_test_database.py --database TeabarDB_Phase2_Test
+python database/admin/prepare_test_database.py --database TeabarDB_Phase2_Work
 Copy-Item .env.example .env
-
-# 4. 启动
-python run.py          # http://127.0.0.1:5000
+# 在 .env 中填写随机 TEABAR_SECRET_KEY；演示建议 TEABAR_ENV=demo
+python run.py
 ```
 
-演示账号见[演示账号与初始化](演示账号与初始化.md)。测试使用独立库 `TeabarDB_Phase2_Test`：
+如果独立库已经完成 v1.0 迁移，只需运行 `python database/admin/init_web_accounts.py --database TeabarDB_Phase2_Work`。初始化自动安装 `web_backend_extensions.sql`，包含匿名只读身份、幂等请求回执和字符类兼容修复；`--dry-run` 回滚全部初始化与扩展，`--reset-passwords` 才重置已有演示密码。
+
+`prepare_test_database.py` 仅接收固定 Work/Test 库名，先建新库，从根脚本截取建表部分，适配目标库守卫并装载数据，执行 A 的 v1.0 迁移及 184 回归，随后安装 B 对象。新库存在时直接拒绝，不运行 DROP。冻结 `TeabarDB` 仅采集只读聚合指纹。
+
+## 配置与启动
+
+环境变量为 `TEABAR_DB_DRIVER/SERVER/NAME/TRUSTED/USER/PASSWORD`、`TEABAR_SECRET_KEY`、`TEABAR_SESSION_COOKIE_SECURE`、`TEABAR_ENV`。不提交真实 `.env`；示例无固定密钥，开发模式缺失密钥时仅生成本进程随机密钥（重启后会话失效）；demo/production 缺密钥直接拒绝。默认关闭 debug。
+
+默认地址 `http://127.0.0.1:5000`；匿名可看 `/menu`、`/menu/<product_id>` 与 `/api/menu`，下单需要购买账号。`/healthz` 只返回健康状态。演示账号见[初始化说明](演示账号与初始化.md)。
+
+## 测试
 
 ```powershell
-python -m pytest -q    # 31 passed
+python -m pytest -q
+python database/admin/verify_web_permissions.py --database TeabarDB_Phase2_Test
 ```
 
-`TeabarDB_Phase2_Test` 由 v0.1 备份还原并对副本执行 v1.0 迁移得到，初始化方式见[演示账号与初始化](演示账号与初始化.md)。
+pytest 默认且仅针对固定独立测试库；即使设置 `TEABAR_TEST_DB` 也仅允许该固定库名，其他目标直接拒绝。测试会保留测试订单、快照与幂等回执，测试库不可当作干净演示数据。当前配置原生 SQL Server 只支持 Windows 认证：应用演示仍以开发者集成身份连接；26 项权限探针是模拟受限入口与业务身份，不能当作真实受限登录的连接证据。
 
-## 应用结构
-
-```text
-run.py                     Flask 入口
-app/
-├─ __init__.py             应用工厂、蓝图、CSRF、错误处理和 /healthz
-├─ config.py               环境变量与 ODBC 连接串
-├─ db.py                   连接生命周期与受限身份切换（EXECUTE AS/REVERT）
-├─ security.py             会话、CSRF、登录复核、角色门禁
-├─ errors.py               统一错误类型与 SQL 错误号映射
-├─ dao/                    唯一直接执行 SQL 的层（auth/menu/order/work/admin）
-├─ services/               业务规则、输入校验、错误翻译（auth/menu/order/work/admin）
-├─ routes/                 HTML 页面 + /api JSON（auth/menu/order/work/admin/api）
-├─ templates/              Jinja2 模板（B 的可运行参考实现，供 C 替换）
-└─ static/style.css
-database/admin/init_web_accounts.py   管理员初始化脚本（不进日常请求路径）
-tests/                    pytest：认证、菜单、下单、退款、工作台、统计、库存、积分
-requirements.txt、.env.example、pytest.ini
-```
-
-分层固定为 Browser → Route → Service → DAO → `teabar_api` 视图/过程 → SQL Server；Route、Service 和模板中不出现 SQL 文本。
-
-## 页面与接口
-
-- 顾客/会员：`/menu`、`/orders/new`、`/my/orders`、`/my/orders/<id>`，以及下单、退款 POST。
-- 店员/店长：`/work/orders`、`/work/orders/<id>`、`/work/team`，状态推进与会员登记 POST。
-- 店长：`/admin/stats`、`/admin/stock`、`/admin/employees`、`/admin/members`。
-- JSON API：`/api/menu`、`/api/me`、`/api/orders`、`/api/my/orders`、`/api/work/*`、`/api/admin/*`，字段与错误码见[接口与模板约定（给 C）](接口与模板约定-给C.md)。
-
-## 关键设计
-
-- **身份**：会话只保存 `account_id/session_version/app_role/principal_name/login_name`；每次请求用 `teabar_auth.usp_GetWebContext` 复核，再 `EXECUTE AS USER web_*` 调用业务对象，`finally REVERT` 并关闭连接。购买者身份由数据库 `PrincipalBinding` 解析，应用不向下单过程传会员/游客编号、单价或角色。
-- **参数化**：DAO 全部使用 `?` 占位符；三个 JSON 数组由 `json.dumps` 后绑定到 `teabar_api.usp_PlacePaidOrderJson`，不拼 SQL。
-- **事务**：应用连接 `autocommit=True`，下单、退款、状态推进、补库的事务边界在数据库过程内；库存不足等失败整单回滚（测试覆盖）。
-- **错误**：`52000/52001/52005/52007/52008/52009/52016/52018/52103/52105/52106/52600–52604/52700` 映射为稳定应用错误码；未知异常统一 500，SQL 堆栈只进日志。
-- **Web 安全**：所有修改请求校验 CSRF；会话 Cookie `HttpOnly`、`SameSite=Lax`；会话版本变化立即失效；服务端按角色拒绝越权，不依赖前端隐藏按钮。
-
-## 文档导航
-
-- [后端技术说明](后端技术说明.md)：技术栈、分层、连接与事务、参数化、错误与日志、安全与测试。
-- [登录与身份映射](登录与身份映射.md)：WebAccount、哈希、会话复核、`EXECUTE AS` 与角色映射。
-- [演示账号与初始化](演示账号与初始化.md)：`init_web_accounts.py` 行为、账号表、测试库准备。
-- [接口与模板约定（给 C）](接口与模板约定-给C.md)：页面、JSON API、字段、错误码与模板变量。
-- [已知限制与后续](已知限制与后续.md)：A 的约束缺陷、仅 Windows 认证、测试库与清理。
-- [给 A 的缺陷反馈](给A的缺陷反馈.md)：`CK_WebAccount_LoginName` 与登录名长度不一致的可复现说明。
-
-验证证据在 `results/phase2/web/`（pytest 输出、迁移到测试库的记录、回归结果）。
+目录：`app/routes` HTTP、`app/services` 输入/授权、`app/dao` SQL 与结果、`app/db.py` 身份连接生命周期、`app/templates` 可替换参考界面；管理员脚本在 `database/admin`，新结果在 `results/phase2/web/2026-11-07-fixes`。

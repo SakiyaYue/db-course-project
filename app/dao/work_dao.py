@@ -13,9 +13,7 @@ def _iso(value) -> str | None:
     return value.isoformat(sep=" ", timespec="seconds") if value is not None else None
 
 
-def _rows(cursor: pyodbc.Cursor) -> list[dict]:
-    columns = [col[0] for col in cursor.description]
-    return [dict(zip(columns, row)) for row in cursor.fetchall()]
+from .common import first_result as _rows
 
 
 def list_work_orders(conn: pyodbc.Connection) -> list[dict]:

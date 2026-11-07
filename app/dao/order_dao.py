@@ -6,6 +6,8 @@ import json
 
 import pyodbc
 
+from .common import transaction_count, procedure
+
 
 def _iso(value) -> str | None:
     return value.isoformat(sep=" ", timespec="seconds") if value is not None else None
@@ -15,9 +17,7 @@ def _money(value) -> str | None:
     return f"{value:.2f}" if value is not None else None
 
 
-def _rows(cursor: pyodbc.Cursor) -> list[dict]:
-    columns = [col[0] for col in cursor.description]
-    return [dict(zip(columns, row)) for row in cursor.fetchall()]
+from .common import first_result as _rows
 
 
 def place_paid_order(
@@ -162,3 +162,14 @@ def get_my_member(conn: pyodbc.Connection) -> dict | None:
     finally:
         cursor.close()
     return rows[0] if rows else None
+
+
+def place_web_order(conn, token, digest, order_id, items, specs, addons, payment_succeeded):
+    rows = procedure(conn, "EXEC teabar_api.usp_PlaceWebOrder ?, ?, ?, ?, ?, ?, ?",
+                     token, digest, order_id, json.dumps(items, ensure_ascii=False),
+                     json.dumps(specs, ensure_ascii=False), json.dumps(addons, ensure_ascii=False),
+                     int(payment_succeeded))
+    if not rows:
+        raise pyodbc.Error("no_result", "订单过程没有返回结果")
+    return {"order_id": rows[0]["order_id"], "total_amount": _money(rows[0]["total_amount"]),
+            "status": rows[0]["status"]}

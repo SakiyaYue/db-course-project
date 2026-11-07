@@ -5,12 +5,14 @@
   <h1>菜单</h1>
   {% if role in ('customer', 'member') %}
     <a class="button primary" href="{{ url_for('menu.checkout') }}">去点单</a>
+  {% elif not role %}
+    <a class="button" href="{{ url_for('auth.login') }}">登录后点单</a>
   {% endif %}
 </section>
 <div class="grid">
   {% for product in catalog.products %}
     <article class="card product">
-      <h2>{{ product.product_name }}</h2>
+      <h2><a href="{{ url_for('menu.product_detail', product_id=product.product_id) }}">{{ product.product_name }}</a></h2>
       <p class="price">￥{{ product.base_price }}</p>
       {% if product.description %}<p class="muted">{{ product.description }}</p>{% endif %}
       <dl>

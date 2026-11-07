@@ -12,8 +12,11 @@ import pytest
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 
-# 测试固定使用独立测试库；需要时可用 TEABAR_TEST_DB 覆盖。
-os.environ["TEABAR_DB_NAME"] = os.environ.get("TEABAR_TEST_DB", "TeabarDB_Phase2_Test")
+# Fail closed: integration fixtures must never target the source or demo database.
+_test_database = os.environ.get("TEABAR_TEST_DB", "TeabarDB_Phase2_Test")
+if _test_database != "TeabarDB_Phase2_Test":
+    raise RuntimeError("pytest 仅允许独立 TeabarDB_Phase2_Test，拒绝源库/工作库/其他目标")
+os.environ["TEABAR_DB_NAME"] = _test_database
 os.environ.setdefault("TEABAR_SECRET_KEY", "pytest-insecure-key")
 
 from app import create_app  # noqa: E402

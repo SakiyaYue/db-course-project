@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import secrets
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -44,7 +45,11 @@ class Config:
         }
         secret = os.environ.get("TEABAR_SECRET_KEY", "").strip()
         if not secret:
-            secret = "dev-only-insecure-key"
+            if os.environ.get("TEABAR_ENV", "development") != "development":
+                raise RuntimeError("演示/部署环境必须设置 TEABAR_SECRET_KEY")
+            secret = secrets.token_urlsafe(48)
+        if secret in {"dev-only-insecure-key", "dev-only-change-me"}:
+            raise RuntimeError("请设置随机 TEABAR_SECRET_KEY，不能使用示例密钥")
         return cls(
             db_driver=os.environ.get("TEABAR_DB_DRIVER", "ODBC Driver 18 for SQL Server"),
             db_server=os.environ.get("TEABAR_DB_SERVER", "localhost"),
@@ -57,12 +62,14 @@ class Config:
         )
 
     def connection_string(self, app_name: str = "teabar-web") -> str:
+        def quote(value):
+            return "{" + str(value).replace("}", "}}") + "}"
         parts = [
-            f"DRIVER={{{self.db_driver}}}",
-            f"SERVER={self.db_server}",
-            f"DATABASE={self.db_name}",
+            f"DRIVER={quote(self.db_driver)}",
+            f"SERVER={quote(self.db_server)}",
+            f"DATABASE={quote(self.db_name)}",
             "TrustServerCertificate=yes",
-            f"APP={app_name}",
+            f"APP={quote(app_name)}",
             f"Connection Timeout={self.connect_timeout}",
         ]
         if self.db_trusted:
@@ -70,5 +77,5 @@ class Config:
         else:
             if not self.db_user or self.db_password is None:
                 raise RuntimeError("非信任连接必须配置 TEABAR_DB_USER / TEABAR_DB_PASSWORD")
-            parts.extend([f"UID={self.db_user}", f"PWD={self.db_password}"])
+            parts.extend([f"UID={quote(self.db_user)}", f"PWD={quote(self.db_password)}"])
         return ";".join(parts)

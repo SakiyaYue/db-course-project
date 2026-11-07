@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from flask import Blueprint, jsonify, request
 
-from ..security import csrf_token, current_auth, login_required, session_scope
+from ..security import catalog_scope, csrf_token, current_auth, login_required, session_scope
 from ..services import admin_service, menu_service, order_service, work_service
 
 bp = Blueprint("api", __name__, url_prefix="/api")
@@ -43,9 +43,8 @@ def me():
 
 
 @bp.get("/menu")
-@login_required
 def menu():
-    with session_scope() as (conn, _ctx):
+    with catalog_scope() as (conn, _ctx):
         return jsonify(menu_service.load_catalog(conn))
 
 
@@ -67,7 +66,10 @@ def my_order_detail(order_id: str):
 @login_required
 def create_order():
     with session_scope(roles=BUYER_ROLES) as (conn, _ctx):
-        result = order_service.place_paid_order(conn, _body())
+        payload = _body()
+        if request.headers.get("Idempotency-Key"):
+            payload["request_token"] = request.headers["Idempotency-Key"]
+        result = order_service.place_paid_order(conn, payload)
     return jsonify(result), 201
 
 

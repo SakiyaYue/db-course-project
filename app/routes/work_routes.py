@@ -46,7 +46,7 @@ def advance(order_id: str):
             result = work_service.advance(conn, order_id, next_status)
         except AppError as exc:
             flash(exc.message, "danger")
-            return redirect(url_for("work.order_detail", order_id=order_id)), exc.status
+            return render_template("work_order_detail.html", order=work_service.get_order_detail(conn, order_id)), exc.status
     flash(f"订单 {result['order_id']} 已流转到 {result['status']}。", "success")
     return redirect(url_for("work.order_detail", order_id=order_id))
 
@@ -70,6 +70,8 @@ def save_member():
             work_service.save_member(conn, member_id, name, phone)
         except AppError as exc:
             flash(exc.message, "danger")
-            return redirect(url_for("work.orders", phone=phone)), exc.status
+            return render_template("work_orders.html", orders=work_service.list_orders(conn), member=None,
+                                   role=_ctx["app_role"], phone=phone,
+                                   form_values={"member_id":member_id,"name":name,"phone":phone}), exc.status
     flash(f"会员 {member_id} 已保存。", "success")
     return redirect(url_for("work.orders", phone=phone))

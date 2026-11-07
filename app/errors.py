@@ -28,10 +28,12 @@ DB_ERROR_MAP: dict[int, tuple[str, str, int]] = {
     52602: ("json_value", "订单编号或数量的类型、格式不正确。", 400),
     52603: ("json_duplicate", "订单内存在重复的明细或选择。", 400),
     52604: ("json_reference", "规格或加料引用了本次订单之外的明细。", 400),
+    52820: ("request_conflict", "同一请求标识不能用于不同的购物篮。", 409),
+    52821: ("request_busy", "订单请求处理中，请稍后使用相同标识重试。", 503),
     52700: ("session_invalid", "登录状态已失效，请重新登录。", 401),
 }
 
-SQL_NUMBER_PATTERN = re.compile(r"\((\d{4,6})\)")
+SQL_NUMBER_PATTERN = re.compile(r"\((\d{3,6})\)")
 
 
 class AppError(Exception):
@@ -43,6 +45,13 @@ class AppError(Exception):
         self.message = message
         self.status = status
         self.detail = detail
+        # Store structured diagnostics, never raw SQL/parameters/passwords in audit logs.
+        from flask import g, has_request_context
+        if has_request_context():
+            g.error_code = code
+            g.sql_number = extract_sql_number(Exception(detail or ""))
+            match = re.search(r"\b(?:08[A-Z0-9]{3}|HY[A-Z0-9]{3}|23000|28000|42000)\b", detail or "")
+            g.sql_state = match.group(0) if match else None
 
 
 class AuthRequired(AppError):
@@ -61,17 +70,21 @@ def extract_sql_number(exc: Exception) -> int | None:
         text = str(arg)
         for match in SQL_NUMBER_PATTERN.finditer(text):
             number = int(match.group(1))
-            if 50000 <= number <= 59999 or number in (2601, 2627, 229, 547):
+            if 50000 <= number <= 59999 or number in (2601, 2627, 229, 547, 1205, 1222):
                 return number
     return None
 
 
 def translate_db_error(exc: Exception) -> AppError:
     """把 pyodbc/数据库异常翻译成 AppError；未知错误返回 500 且隐藏细节。"""
+    if isinstance(exc, AppError):
+        return exc
     number = extract_sql_number(exc)
     if number in DB_ERROR_MAP:
         code, message, status = DB_ERROR_MAP[number]
         return AppError(code, message, status, detail=str(exc))
+    if number in (1205, 1222):
+        return AppError("transaction_failed", "事务冲突或超时，请稍后重试。", 503, detail=str(exc))
     if number in (2601, 2627):
         return AppError("duplicate_key", "数据已存在，不能重复创建。", 409, detail=str(exc))
     if number == 547:
@@ -82,6 +95,8 @@ def translate_db_error(exc: Exception) -> AppError:
         return AppError("database_business_error", "数据库拒绝了本次操作，请检查输入。", 409, detail=str(exc))
     # 连接类错误（驱动/网络）与未知错误分开处理
     text = " ".join(str(arg) for arg in getattr(exc, "args", ()))
+    if any(state in text for state in ("HYT00", "HYT01")):
+        return AppError("transaction_timeout", "数据库操作超时，请稍后重试。", 503, detail=text)
     if "SQL Server" in text or "ODBC" in text:
         return AppError("database_error", "数据库暂时不可用，请稍后重试。", 503, detail=text)
     return AppError("internal_error", "服务器内部错误，请稍后重试。", 500, detail=text)

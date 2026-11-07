@@ -35,6 +35,7 @@ import argparse
 import os
 import re
 import sys
+from pathlib import Path
 from dataclasses import dataclass, field
 
 import pyodbc
@@ -294,6 +295,14 @@ def main(argv: list[str] | None = None) -> int:
             account_id = ensure_account(cursor, account, args.reset_passwords)
             verify_account(cursor, account, account_id)
         verify_impersonation(cursor)
+        # Additive B interfaces are installed in the same administrative transaction.
+        extension = Path(__file__).with_name("web_backend_extensions.sql").read_text(encoding="utf-8")
+        for batch in re.split(r"^\s*GO\s*$", extension, flags=re.MULTILINE | re.IGNORECASE):
+            if batch.strip():
+                cursor.execute(batch)
+                while cursor.nextset():
+                    pass
+        print("[扩展] public menu and idempotent order interfaces installed")
 
         if args.dry_run:
             conn.rollback()

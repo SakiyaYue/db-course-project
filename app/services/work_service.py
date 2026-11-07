@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import re
 
+from ..security import service_roles
+
 from ..dao import work_dao
 from ..errors import AppError, translate_db_error
 
@@ -12,6 +14,7 @@ PHONE_PATTERN = re.compile(r"^\d{7,20}$")
 ALLOWED_STATUSES = ("排队中", "制作中", "待取餐", "已完成", "已取消")
 
 
+@service_roles("clerk", "manager")
 def list_orders(conn) -> list[dict]:
     try:
         return work_dao.list_work_orders(conn)
@@ -19,6 +22,7 @@ def list_orders(conn) -> list[dict]:
         raise translate_db_error(exc) from exc
 
 
+@service_roles("clerk", "manager")
 def get_order_detail(conn, order_id: str) -> dict:
     if not ID_PATTERN.fullmatch(order_id or ""):
         raise AppError("invalid_id", "订单编号格式不正确。", 400)
@@ -33,6 +37,7 @@ def get_order_detail(conn, order_id: str) -> dict:
     return detail
 
 
+@service_roles("clerk", "manager")
 def list_team(conn) -> list[dict]:
     try:
         return work_dao.list_work_team(conn)
@@ -40,6 +45,7 @@ def list_team(conn) -> list[dict]:
         raise translate_db_error(exc) from exc
 
 
+@service_roles("clerk", "manager")
 def advance(conn, order_id: str, next_status: str) -> dict:
     if not ID_PATTERN.fullmatch(order_id or ""):
         raise AppError("invalid_id", "订单编号格式不正确。", 400)
@@ -51,6 +57,7 @@ def advance(conn, order_id: str, next_status: str) -> dict:
         raise translate_db_error(exc) from exc
 
 
+@service_roles("clerk", "manager")
 def find_member(conn, phone: str | None) -> dict | None:
     phone = (phone or "").strip()
     if not PHONE_PATTERN.fullmatch(phone):
@@ -61,6 +68,7 @@ def find_member(conn, phone: str | None) -> dict | None:
         raise translate_db_error(exc) from exc
 
 
+@service_roles("clerk", "manager")
 def save_member(conn, member_id: str, name: str, phone: str) -> None:
     if not ID_PATTERN.fullmatch(member_id or ""):
         raise AppError("invalid_id", "会员编号格式不正确。", 400)

@@ -33,6 +33,9 @@ def login():
         with get_database().connection("teabar-web-login") as conn:
             payload = auth_service.authenticate(conn, login_name, password)
     except AppError as exc:
+        if exc.status >= 500:
+            flash(exc.message, "danger")
+            return render_template("login.html", login_name=login_name or ""), exc.status
         if exc.code in {"login_invalid", "password_required"}:
             flash(exc.message, "warning")
         else:

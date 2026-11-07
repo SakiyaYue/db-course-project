@@ -1,0 +1,3 @@
+COMMAND: C:\ProgramData\anaconda3\python.exe database/admin/verify_web_permissions.py --database TeabarDB_Phase2_Test
+EXIT_CODE: 0
+权限探针通过：26项；事务已回滚；D:\00_study_file_desktop\grade_3\grade_3_1\01 Principles of Database Systems\lab\db-course-project\results\phase2\web\2026-11-07-fixes\web-permissions.txt

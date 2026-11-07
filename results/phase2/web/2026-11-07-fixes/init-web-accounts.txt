@@ -1,0 +1,33 @@
+[连接] TeabarDB_Phase2_Test as DESKTOP-8DAPIKK\zoujy
+[创建角色] teabar_web_app
+[创建用户] web_guest_a (WITHOUT LOGIN)
+[加入角色] web_guest_a -> teabar_customer
+[创建用户] web_guest_b (WITHOUT LOGIN)
+[加入角色] web_guest_b -> teabar_customer
+[创建用户] web_member_a (WITHOUT LOGIN)
+[加入角色] web_member_a -> teabar_member
+[创建用户] web_member_b (WITHOUT LOGIN)
+[加入角色] web_member_b -> teabar_member
+[创建用户] web_clerk (WITHOUT LOGIN)
+[加入角色] web_clerk -> teabar_clerk
+[创建用户] web_manager (WITHOUT LOGIN)
+[加入角色] web_manager -> teabar_manager
+[授权] teabar_web_app: EXECUTE×2, VIEW DEFINITION×10, IMPERSONATE×6
+[绑定] web_guest_a -> member=None guest=0D9AB0CB-4ABA-49E6-B46C-645EB5CAC9F6
+[账号] 新建 guesta (account_id=7, role=customer)
+[校验] guesta: app_role=customer principal=web_guest_a OK
+[绑定] web_guest_b -> member=None guest=83F678A7-6C90-4BEF-BC46-74E733EA1D37
+[账号] 新建 guestb (account_id=8, role=customer)
+[校验] guestb: app_role=customer principal=web_guest_b OK
+[绑定] web_member_a -> member=M001 guest=None
+[账号] 新建 membera (account_id=9, role=member)
+[校验] membera: app_role=member principal=web_member_a OK
+[绑定] web_member_b -> member=M002 guest=None
+[账号] 新建 memberb (account_id=10, role=member)
+[校验] memberb: app_role=member principal=web_member_b OK
+[账号] 新建 clerk1 (account_id=11, role=clerk)
+[校验] clerk1: app_role=clerk principal=web_clerk OK
+[账号] 新建 manager1 (account_id=12, role=manager)
+[校验] manager1: app_role=manager principal=web_manager OK
+[校验] EXECUTE AS web_guest_a -> USER_NAME=web_guest_a, 已 REVERT
+[完成] 初始化已提交。演示账号密码见 docs/phase2/07-web/演示账号与初始化.md。

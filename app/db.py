@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 import contextlib
+import logging
 from collections.abc import Iterator
 
 import pyodbc
@@ -16,10 +17,21 @@ import pyodbc
 from .config import Config
 from .errors import AppError
 
+# Must be set before the first connection is created.
+pyodbc.pooling = False
+
 # 接口约定第 3.2 节固定的六个 Web 数据库用户
 ALLOWED_PRINCIPALS = frozenset(
-    {"web_guest_a", "web_guest_b", "web_member_a", "web_member_b", "web_clerk", "web_manager"}
+    {"web_guest_a", "web_guest_b", "web_member_a", "web_member_b", "web_clerk", "web_manager", "web_public"}
 )
+
+
+def _safe_close(resource):
+    try:
+        resource.close()
+    except pyodbc.Error as exc:
+        # Closing an already-discarded ODBC handle must not mask the business/cleanup error.
+        logging.getLogger(__name__).warning("ODBC handle disposal: %s", type(exc).__name__)
 
 
 class Database:
@@ -36,7 +48,11 @@ class Database:
         except pyodbc.Error as exc:
             raise AppError("database_unavailable", "无法连接数据库，请确认 SQL Server 已启动。", 503,
                            detail=str(exc)) from exc
-        conn.timeout = self.config.query_timeout
+        try:
+            conn.timeout = self.config.query_timeout
+        except Exception:
+            _safe_close(conn)
+            raise
         return conn
 
     @contextlib.contextmanager
@@ -45,7 +61,7 @@ class Database:
         try:
             yield conn
         finally:
-            conn.close()
+            _safe_close(conn)
 
     @contextlib.contextmanager
     def impersonate(self, conn: pyodbc.Connection, principal_name: str) -> Iterator[None]:
@@ -53,14 +69,19 @@ class Database:
         if principal_name not in ALLOWED_PRINCIPALS:
             raise AppError("invalid_principal", "数据库身份不在允许名单内。", 500)
         cursor = conn.cursor()
-        cursor.execute(f"EXECUTE AS USER = '{principal_name}';")  # 白名单常量，非用户输入
+        switched = False
         try:
+            cursor.execute(f"EXECUTE AS USER = '{principal_name}';")
+            switched = True
             yield
         finally:
             try:
-                cursor.execute("REVERT;")
-            except pyodbc.Error:
-                # 连接已断时无需 REVERT；记录由上层负责
-                pass
+                if switched:
+                    cursor.execute("IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;")
+                    cursor.execute("REVERT;")
+            except pyodbc.Error as exc:
+                _safe_close(conn)  # Never reuse a connection whose identity is uncertain.
+                raise AppError("identity_cleanup_failed", "数据库会话清理失败，请重试。", 503,
+                               detail=type(exc).__name__) from exc
             finally:
-                cursor.close()
+                _safe_close(cursor)

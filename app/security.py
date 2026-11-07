@@ -13,7 +13,7 @@ from collections.abc import Iterator
 from functools import wraps
 
 import pyodbc
-from flask import current_app, flash, jsonify, redirect, request, session, url_for
+from flask import g, has_request_context, current_app, flash, jsonify, redirect, request, session, url_for
 
 from .dao import auth_dao
 from .db import Database
@@ -89,7 +89,13 @@ def session_scope(*, roles: tuple[str, ...] | None = None) -> Iterator[tuple[pyo
         if roles is not None and ctx["app_role"] not in roles:
             raise Forbidden()
         with db.impersonate(conn, ctx["principal_name"]):
-            yield conn, ctx
+            g.business_context = ctx
+            g.business_connection = conn
+            try:
+                yield conn, ctx
+            finally:
+                g.pop("business_context", None)
+                g.pop("business_connection", None)
 
 
 def login_required(view):
@@ -110,3 +116,35 @@ def login_required(view):
             return redirect(url_for("menu.index"))
 
     return wrapper
+
+
+@contextmanager
+def catalog_scope():
+    if current_auth():
+        with session_scope() as scoped:
+            yield scoped
+    else:
+        db = get_database()
+        with db.connection() as conn:
+            with db.impersonate(conn, "web_public"):
+                yield conn, None
+
+
+def service_roles(*roles):
+    """Services verify trusted context too; direct callers are checked against SQL roles."""
+    def decorate(function):
+        @wraps(function)
+        def checked(conn, *args, **kwargs):
+            if has_request_context():
+                ctx = getattr(g, "business_context", None)
+                if not ctx or getattr(g, "business_connection", None) is not conn:
+                    raise AuthRequired()
+                if ctx.get("app_role") not in roles:
+                    raise Forbidden()
+            else:
+                ctx = auth_dao.business_role(conn)
+                if not any(ctx.get(role) == 1 for role in roles):
+                    raise Forbidden()
+            return function(conn, *args, **kwargs)
+        return checked
+    return decorate

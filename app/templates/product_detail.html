@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}{{ product.product_name }} · Teabar{% endblock %}
+{% block content %}
+<section class="card">
+  <h1>{{ product.product_name }}</h1>
+  <p class="price">￥{{ product.base_price }}</p>
+  <p>{{ product.description or '' }}</p>
+  {% for kind, choices in product.spec_types.items() %}
+    <h2>{{ kind }}</h2>
+    <ul>{% for choice in choices %}<li>{{ choice.spec_name }} +{{ choice.price_delta }} 元</li>{% endfor %}</ul>
+  {% endfor %}
+  <h2>可选加料</h2>
+  <ul>{% for addon in addons %}<li>{{ addon.addon_name }} +{{ addon.price }} 元</li>{% endfor %}</ul>
+  <a href="{{ url_for('menu.checkout') }}">去点单</a>
+  <a href="{{ url_for('menu.menu') }}">返回菜单</a>
+</section>
+{% endblock %}

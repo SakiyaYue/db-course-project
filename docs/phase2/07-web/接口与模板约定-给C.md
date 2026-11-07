@@ -1,5 +1,8 @@
 # 接口与模板约定（给组员 C）
 
+> 2026-11-07补充优先于旧表：匿名GET /menu、/menu/<product_id>、/api/menu可用；下单仍需购买账号。HTML结算字段为items_json（多商品数组）、payment_succeeded（true/false）、request_token（20—100位URLsafe），保留旧单商品兼容输入。错误时同页回填，保持实际4xx/5xx状态。API可用Idempotency-Key请求头或request_token字段，网络重试必须复用同键；冲突request_conflict=409，繁忙request_busy=503。每个响应带X-Request-ID，healthz仅返回status。C最终合并仍待外部验收。
+
+
 日期：2026-11-07。状态：HTML 路由与 `/api` JSON 已实现并通过 31 项 pytest；B 的模板是可运行的参考实现，C 可以在**不改字段名、不改角色规则、不改错误码**的前提下替换视觉层。数据库对象与字段以 [v1.0 接口约定](../06-normalization/v1.0数据库接口约定.md) 为准。
 
 ## 1. 角色与登录跳转

@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import json
+import secrets
+
 from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
 
 from ..errors import AppError
 from ..security import login_required, session_scope
-from ..services import order_service
+from ..services import menu_service, order_service
 
 bp = Blueprint("orders", __name__)
 
@@ -39,6 +42,7 @@ def order_detail(order_id: str):
 @bp.post("/orders")
 @login_required
 def create_order():
+    payload = {}
     with session_scope(roles=BUYER_ROLES) as (conn, _ctx):
         try:
             if request.is_json:
@@ -49,8 +53,19 @@ def create_order():
         except AppError as exc:
             if _wants_json():
                 return jsonify({"error": {"code": exc.code, "message": exc.message}}), exc.status
-            flash(exc.message, "danger")
-            return redirect(url_for("menu.checkout")), exc.status
+            # Re-render with safe basket fields, retaining the same idempotency token.
+            if not payload:
+                try:
+                    raw_items = json.loads(request.form.get("items_json", "[]"))
+                except (ValueError, TypeError):
+                    raw_items = []
+                payload = {"items": raw_items if isinstance(raw_items, list) else [],
+                           "payment_succeeded": request.form.get("payment_succeeded", "true") == "true"}
+            return render_template(
+                "checkout.html", catalog=menu_service.load_catalog(conn), payload=payload,
+                request_token=request.form.get("request_token") or secrets.token_urlsafe(32),
+                error=exc.message,
+            ), exc.status
     if _wants_json():
         return jsonify(result), 201
     flash(f"下单成功：{result['order_id']}，金额 {result['total_amount']} 元。", "success")
@@ -66,8 +81,7 @@ def refund(order_id: str):
         except AppError as exc:
             if _wants_json():
                 return jsonify({"error": {"code": exc.code, "message": exc.message}}), exc.status
-            flash(exc.message, "danger")
-            return redirect(url_for("orders.my_orders")), exc.status
+            return render_template("error.html", code=exc.code, message=exc.message, status=exc.status), exc.status
     if _wants_json():
         return jsonify(result)
     flash(f"订单 {result['order_id']} 已退款。", "success")

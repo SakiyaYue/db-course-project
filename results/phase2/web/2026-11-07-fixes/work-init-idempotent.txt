@@ -1,0 +1,11 @@
+[连接] TeabarDB_Phase2_Work as DESKTOP-8DAPIKK\zoujy
+[授权] teabar_web_app: EXECUTE×2, VIEW DEFINITION×10, IMPERSONATE×6
+[校验] guesta: app_role=customer principal=web_guest_a OK
+[校验] guestb: app_role=customer principal=web_guest_b OK
+[校验] membera: app_role=member principal=web_member_a OK
+[校验] memberb: app_role=member principal=web_member_b OK
+[校验] clerk1: app_role=clerk principal=web_clerk OK
+[校验] manager1: app_role=manager principal=web_manager OK
+[校验] EXECUTE AS web_guest_a -> USER_NAME=web_guest_a, 已 REVERT
+[扩展] public menu and idempotent order interfaces installed
+[完成] 初始化已提交。演示账号密码见 docs/phase2/07-web/演示账号与初始化.md。

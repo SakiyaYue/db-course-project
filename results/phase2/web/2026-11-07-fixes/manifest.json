@@ -1,0 +1,54 @@
+{
+  "database-setup-continued.txt": {
+    "bytes": 231176,
+    "sha256": "b9b7ccf17b3b9e23f8f7464fb67f2d01618f12a0c25c78245012f3cd0fb39f9d"
+  },
+  "database-setup.txt": {
+    "bytes": 259,
+    "sha256": "c12559f0b3514b769a8d14c56dfc17c4b5e9728f46bbc72d530062e84e49e07d"
+  },
+  "independent-review.md": {
+    "bytes": 1606,
+    "sha256": "cdcecb0fac95533b8bb4aa16b6d54cd88d34ea02ec33c0c722f04945b4783731"
+  },
+  "init-dry-run.txt": {
+    "bytes": 809,
+    "sha256": "7737371e7373512f723f7a8b768c8a02cd455b92c040657d9c8f9da36902d2a8"
+  },
+  "init-web-accounts.txt": {
+    "bytes": 1815,
+    "sha256": "fafe70bdf4e35458c362a8b4762e347f49201e3ba82365640f46317bd1caae8e"
+  },
+  "pytest-final.txt": {
+    "bytes": 266,
+    "sha256": "0f009488f6a77cb6f164cc572e1f5ea332c812de91bfcd0d5153fedc3b53c5c6"
+  },
+  "README.md": {
+    "bytes": 1399,
+    "sha256": "c0d1a418e85c71ba4a278411a9fca60d87b47e11be87c005b5524292e4547c8b"
+  },
+  "web-extensions-install.txt": {
+    "bytes": 58,
+    "sha256": "c07705bcac6687780b0f9f44060fd6808b13f1f03db5e719d0a37cfe522490b1"
+  },
+  "web-permissions-final.txt": {
+    "bytes": 336,
+    "sha256": "7d93833b75a963af076ef6b7b25f7007ed23965ff8f01472973699ba163c5444"
+  },
+  "web-permissions.txt": {
+    "bytes": 2217,
+    "sha256": "fd8e98a0421d6c0d43e7b521dfc3c9d39a53f10f11219b59855e5305d828a7f6"
+  },
+  "work-database-setup.txt": {
+    "bytes": 237666,
+    "sha256": "092fe0b553990e3cc24cb470f2c4197f90bab953ebc45537b53751c32b2bae6e"
+  },
+  "work-init-idempotent.txt": {
+    "bytes": 729,
+    "sha256": "d573bdc7bd81c92da94f83f2bd9c9f40d62b7c122e375a43adeb247fcd34d871"
+  },
+  "work-readonly-smoke.txt": {
+    "bytes": 595,
+    "sha256": "65349cf6b55c6accefae365111f2b2e8c1e77ca7adb4c7752e4e7451dbf49201"
+  }
+}

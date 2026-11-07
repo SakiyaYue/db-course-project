@@ -40,7 +40,8 @@ def adjust_stock():
             admin_service.adjust_stock(conn, ingredient_id, operation, amount)
         except AppError as exc:
             flash(exc.message, "danger")
-            return redirect(url_for("admin.stock")), exc.status
+            return render_template("admin_stock.html", ingredients=admin_service.ingredients(conn),
+                                   form_values={"ingredient_id": ingredient_id, "operation": operation, "amount": amount}), exc.status
     flash("库存已更新。", "success")
     return redirect(url_for("admin.stock"))
 
@@ -78,6 +79,7 @@ def save_member():
             work_service.save_member(conn, member_id, name, phone)
         except AppError as exc:
             flash(exc.message, "danger")
-            return redirect(url_for("admin.members", phone=phone)), exc.status
+            return render_template("admin_members.html", member=None, phone=phone,
+                                   form_values={"member_id":member_id,"name":name,"phone":phone}), exc.status
     flash(f"会员 {member_id} 已保存。", "success")
     return redirect(url_for("admin.members", phone=phone))

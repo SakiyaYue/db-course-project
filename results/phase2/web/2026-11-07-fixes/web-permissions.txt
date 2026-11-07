@@ -1,0 +1,27 @@
+{"case": "entry cannot read account table", "result": "DENIED_AS_EXPECTED"}
+{"case": "entry cannot read business table", "result": "DENIED_AS_EXPECTED"}
+{"case": "entry cannot change stock", "result": "DENIED_AS_EXPECTED"}
+{"case": "entry has no dbo impersonation permission", "result": "DENIED_AS_EXPECTED"}
+{"case": "entry credential and context APIs", "result": "ALLOWED_AS_EXPECTED"}
+{"case": "entry can impersonate anonymous catalog identity", "result": "ALLOWED_AS_EXPECTED"}
+{"case": "guest cannot read all orders", "result": "DENIED_AS_EXPECTED"}
+{"case": "guest cannot update member points", "result": "DENIED_AS_EXPECTED"}
+{"case": "guest has no manager impersonation permission", "result": "DENIED_AS_EXPECTED"}
+{"case": "web_member_a cannot alter historical snapshots", "result": "DENIED_AS_EXPECTED"}
+{"case": "web_member_a cannot delete orders", "result": "DENIED_AS_EXPECTED"}
+{"case": "web_member_a cannot read account secrets", "result": "DENIED_AS_EXPECTED"}
+{"case": "member cannot change points", "result": "DENIED_AS_EXPECTED"}
+{"case": "web_clerk cannot alter historical snapshots", "result": "DENIED_AS_EXPECTED"}
+{"case": "web_clerk cannot delete orders", "result": "DENIED_AS_EXPECTED"}
+{"case": "web_clerk cannot read account secrets", "result": "DENIED_AS_EXPECTED"}
+{"case": "clerk cannot adjust stock", "result": "DENIED_AS_EXPECTED"}
+{"case": "clerk cannot read salary", "result": "DENIED_AS_EXPECTED"}
+{"case": "clerk cannot change prices", "result": "DENIED_AS_EXPECTED"}
+{"case": "web_manager cannot alter historical snapshots", "result": "DENIED_AS_EXPECTED"}
+{"case": "web_manager cannot delete orders", "result": "DENIED_AS_EXPECTED"}
+{"case": "web_manager cannot read account secrets", "result": "DENIED_AS_EXPECTED"}
+{"case": "public cannot read orders", "result": "DENIED_AS_EXPECTED"}
+{"case": "public cannot read account secrets", "result": "DENIED_AS_EXPECTED"}
+{"case": "public cannot write orders", "result": "DENIED_AS_EXPECTED"}
+{"case": "public three catalog views", "result": "ALLOWED_AS_EXPECTED"}
+{"result": "WEB_DATABASE_PERMISSION_PROBE_PASSED", "cases": 26, "scope": "EXECUTE AS USER simulation; not a separate restricted server login"}

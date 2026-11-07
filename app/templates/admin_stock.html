@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}库存 · Teabar{% endblock %}
 {% block content %}
+{% set form_values = form_values|default({}) %}
 <h1>原料库存</h1>
 <table class="table">
   <thead><tr><th>编号</th><th>名称</th><th>库存</th><th>单位</th><th>状态</th></tr></thead>
@@ -14,14 +15,14 @@
   <h2>补库 / 盘点</h2>
   <form method="post" action="{{ url_for('admin.adjust_stock') }}" class="form-row">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <label>原料编号 <input type="text" name="ingredient_id" maxlength="10" required></label>
+    <label>原料编号 <input type="text" name="ingredient_id" value="{{ form_values.get('ingredient_id', '') }}" maxlength="10" required></label>
     <label>操作
       <select name="operation">
-        <option value="补库">补库</option>
-        <option value="盘点">盘点</option>
+        <option value="补库" {% if form_values.get('operation') == '补库' %}selected{% endif %}>补库</option>
+        <option value="盘点" {% if form_values.get('operation') == '盘点' %}selected{% endif %}>盘点</option>
       </select>
     </label>
-    <label>数量 <input type="text" name="amount" required></label>
+    <label>数量 <input type="text" name="amount" value="{{ form_values.get('amount', '') }}" required></label>
     <button type="submit" class="primary">提交</button>
   </form>
 </section>

@@ -5,9 +5,7 @@ from __future__ import annotations
 import pyodbc
 
 
-def _rows(cursor: pyodbc.Cursor) -> list[dict]:
-    columns = [col[0] for col in cursor.description]
-    return [dict(zip(columns, row)) for row in cursor.fetchall()]
+from .common import first_result as _rows
 
 
 def get_credential(conn: pyodbc.Connection, login_name: str) -> dict | None:
@@ -30,3 +28,13 @@ def get_context(conn: pyodbc.Connection, account_id: int, session_version: int) 
     if not rows:
         raise pyodbc.Error("context", "(52700) 账号或会话已失效。")
     return rows[0]
+
+
+def business_role(conn):
+    from .common import query
+    row = query(conn, "SELECT USER_NAME() AS principal_name, "
+                "IS_ROLEMEMBER('teabar_customer') AS customer, "
+                "IS_ROLEMEMBER('teabar_member') AS member, "
+                "IS_ROLEMEMBER('teabar_clerk') AS clerk, "
+                "IS_ROLEMEMBER('teabar_manager') AS manager")[0]
+    return row

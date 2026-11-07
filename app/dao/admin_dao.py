@@ -20,9 +20,7 @@ def _iso(value) -> str | None:
     return value.isoformat()  # date 等只需要日期部分
 
 
-def _rows(cursor: pyodbc.Cursor) -> list[dict]:
-    columns = [col[0] for col in cursor.description]
-    return [dict(zip(columns, row)) for row in cursor.fetchall()]
+from .common import first_result as _rows
 
 
 def daily_sales(conn: pyodbc.Connection) -> list[dict]:
