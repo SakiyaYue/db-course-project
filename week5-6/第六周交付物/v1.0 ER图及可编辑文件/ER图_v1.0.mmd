@@ -1,0 +1,144 @@
+classDiagram
+direction LR
+%% v1.0 schema design. Solid = FK; dotted = logical association.
+class Employee {
+  +varchar employee_id PK
+  +nvarchar name
+  +nvarchar status
+  +decimal salary
+  +nvarchar role
+}
+class DutyRoster {
+  +varchar duty_id PK
+  +varchar employee_id UK_FK
+  +datetime2 start_time UK
+  +datetime2 end_time
+}
+class Member {
+  +varchar member_id PK
+  +nvarchar name
+  +varchar phone UK
+  +int points
+}
+class SalesOrder {
+  +varchar order_id PK
+  +varchar member_id FK_nullable
+  +uniqueidentifier guest_id _nullable
+  +datetime2 order_time
+  +decimal total_amount
+  +nvarchar status
+}
+class Product {
+  +varchar product_id PK
+  +nvarchar product_name
+  +decimal base_price
+  +nvarchar status
+  +nvarchar description _nullable
+}
+class Specification {
+  +varchar spec_id PK
+  +nvarchar spec_type UK
+  +nvarchar spec_name UK
+}
+class Ingredient {
+  +varchar ingredient_id PK
+  +nvarchar ingredient_name
+  +nvarchar unit
+  +decimal stock
+  +nvarchar status
+}
+class OrderItem {
+  +varchar item_id PK
+  +varchar order_id FK
+  +varchar product_id FK
+  +nvarchar product_name_snapshot
+  +int quantity
+  +decimal base_price_snapshot
+  +decimal unit_price
+  +decimal sub_amount _computed
+}
+class ProductSpecification {
+  +varchar product_id PK_FK
+  +varchar spec_id PK_FK
+  +decimal price_delta
+  +nvarchar status
+}
+class Recipe {
+  +varchar product_id PK_FK
+  +varchar ingredient_id PK_FK
+  +decimal base_amount
+}
+class AddOn {
+  +varchar addon_id PK
+  +nvarchar addon_name UK
+  +decimal price
+  +varchar ingredient_id FK
+  +decimal extra_amount
+  +nvarchar status
+}
+class ItemSpec {
+  +varchar item_id PK_FK_CK-derived
+  +nvarchar spec_type PK_FK
+  +varchar spec_id FK_CK-derived
+  +nvarchar spec_name_snapshot
+  +decimal price_delta_snapshot
+}
+class ItemAddOn {
+  +varchar item_id PK_FK
+  +varchar addon_id PK_FK
+  +nvarchar addon_name_snapshot
+  +decimal price_snapshot
+}
+class OrderItemIngredient {
+  +varchar item_id PK_FK
+  +varchar ingredient_id PK_FK
+  +decimal amount
+}
+class SpecificationIngredient {
+  +varchar product_id PK_FK
+  +varchar spec_id PK_FK
+  +varchar ingredient_id PK_FK
+  +decimal factor
+}
+class PrincipalBinding {
+  +varbinary principal_sid PK
+  +sysname principal_name UK
+  +varchar member_id FK_nullable
+  +uniqueidentifier guest_id _nullable
+  +bit is_active
+}
+class WebAccount {
+  +int account_id PK
+  +nvarchar login_name UK
+  +nvarchar password_hash
+  +varchar app_role
+  +varbinary principal_sid UK
+  +bit is_active
+  +int session_version
+}
+Employee "1" --> "0..*" DutyRoster : employee_id FK
+Member "0..1" --> "0..*" SalesOrder : member_id FK
+SalesOrder "1" --> "1..*" OrderItem : order_id FK
+Product "1" --> "0..*" OrderItem : product_id FK
+Product "1" --> "0..*" ProductSpecification : product_id FK
+Specification "1" --> "0..*" ProductSpecification : spec_id FK
+Product "1" --> "0..*" Recipe : product_id FK
+Ingredient "1" --> "0..*" Recipe : ingredient_id FK
+Ingredient "1" --> "0..*" AddOn : ingredient_id FK
+OrderItem "1" --> "0..3" ItemSpec : item_id FK
+Specification "1" --> "0..*" ItemSpec : spec_id_spec_type FK
+OrderItem "1" --> "0..*" ItemAddOn : item_id FK
+AddOn "1" --> "0..*" ItemAddOn : addon_id FK
+OrderItem "1" --> "1..*" OrderItemIngredient : item_id FK
+Ingredient "1" --> "0..*" OrderItemIngredient : ingredient_id FK
+ProductSpecification "1" --> "0..*" SpecificationIngredient : product_id_spec_id FK
+Ingredient "1" --> "0..*" SpecificationIngredient : ingredient_id FK
+Recipe "1" --> "0..*" SpecificationIngredient : product_id_ingredient_id FK
+Member "0..1" --> "0..*" PrincipalBinding : member_id FK
+WebAccount "0..1" ..> "0..1" PrincipalBinding : SID match for buyers - not FK
+DutyRoster "0..*" ..> "0..*" SalesOrder : order_time in duty interval
+PrincipalBinding "0..*" ..> "0..*" SalesOrder : identity ownership - not FK
+note for WebAccount "v1.0 auth table. SID resolved via sys.database_principals."
+note for OrderItemIngredient "D01: each official item has positive consumption; process enforced."
+note for ItemSpec "3NF, not BCNF. Derived key: item_id + spec_id."
+note for OrderItem "sub_amount is a persisted computed value; documented NF exception."

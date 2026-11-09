@@ -1,0 +1,53 @@
+classDiagram
+direction LR
+%% v1.0 身份与人员；实线为外键，虚线为逻辑关联。
+class Employee {
+  +varchar employee_id PK
+  +nvarchar name
+  +nvarchar status
+  +decimal salary
+  +nvarchar role
+}
+class DutyRoster {
+  +varchar duty_id PK
+  +varchar employee_id UK_FK
+  +datetime2 start_time UK
+  +datetime2 end_time
+}
+class Member {
+  +varchar member_id PK
+  +nvarchar name
+  +varchar phone UK
+  +int points
+}
+class SalesOrder {
+  +varchar order_id PK
+  +varchar member_id FK_nullable
+  +uniqueidentifier guest_id _nullable
+  +datetime2 order_time
+  +decimal total_amount
+  +nvarchar status
+}
+class PrincipalBinding {
+  +varbinary principal_sid PK
+  +sysname principal_name UK
+  +varchar member_id FK_nullable
+  +uniqueidentifier guest_id _nullable
+  +bit is_active
+}
+class WebAccount {
+  +int account_id PK
+  +nvarchar login_name UK
+  +nvarchar password_hash
+  +varchar app_role
+  +varbinary principal_sid UK
+  +bit is_active
+  +int session_version
+}
+Employee "1" --> "0..*" DutyRoster : employee_id FK
+Member "0..1" --> "0..*" SalesOrder : member_id FK
+Member "0..1" --> "0..*" PrincipalBinding : member_id FK
+WebAccount "0..1" ..> "0..1" PrincipalBinding : SID match for buyers - not FK
+DutyRoster "0..*" ..> "0..*" SalesOrder : order_time in duty interval
+PrincipalBinding "0..*" ..> "0..*" SalesOrder : identity ownership - not FK
+note for WebAccount "v1.0 auth table. SID resolved via sys.database_principals."

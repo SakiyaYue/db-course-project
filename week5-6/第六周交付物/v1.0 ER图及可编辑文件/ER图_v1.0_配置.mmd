@@ -1,0 +1,55 @@
+classDiagram
+direction LR
+%% v1.0 配置；实线为外键，虚线为逻辑关联。
+class Product {
+  +varchar product_id PK
+  +nvarchar product_name
+  +decimal base_price
+  +nvarchar status
+  +nvarchar description _nullable
+}
+class Specification {
+  +varchar spec_id PK
+  +nvarchar spec_type UK
+  +nvarchar spec_name UK
+}
+class Ingredient {
+  +varchar ingredient_id PK
+  +nvarchar ingredient_name
+  +nvarchar unit
+  +decimal stock
+  +nvarchar status
+}
+class ProductSpecification {
+  +varchar product_id PK_FK
+  +varchar spec_id PK_FK
+  +decimal price_delta
+  +nvarchar status
+}
+class Recipe {
+  +varchar product_id PK_FK
+  +varchar ingredient_id PK_FK
+  +decimal base_amount
+}
+class AddOn {
+  +varchar addon_id PK
+  +nvarchar addon_name UK
+  +decimal price
+  +varchar ingredient_id FK
+  +decimal extra_amount
+  +nvarchar status
+}
+class SpecificationIngredient {
+  +varchar product_id PK_FK
+  +varchar spec_id PK_FK
+  +varchar ingredient_id PK_FK
+  +decimal factor
+}
+Product "1" --> "0..*" ProductSpecification : product_id FK
+Specification "1" --> "0..*" ProductSpecification : spec_id FK
+Product "1" --> "0..*" Recipe : product_id FK
+Ingredient "1" --> "0..*" Recipe : ingredient_id FK
+Ingredient "1" --> "0..*" AddOn : ingredient_id FK
+ProductSpecification "1" --> "0..*" SpecificationIngredient : product_id_spec_id FK
+Ingredient "1" --> "0..*" SpecificationIngredient : ingredient_id FK
+Recipe "1" --> "0..*" SpecificationIngredient : product_id_ingredient_id FK
