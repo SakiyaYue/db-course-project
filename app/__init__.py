@@ -37,7 +37,7 @@ def create_app(config: Config | None = None) -> Flask:
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
 
-    from .routes import admin_routes, api_routes, auth_routes, menu_routes, order_routes, work_routes
+    from .routes import admin_routes, api_routes, auth_routes, menu_routes, order_routes, work_routes, maintenance_routes
 
     app.register_blueprint(auth_routes.bp)
     app.register_blueprint(menu_routes.bp)
@@ -45,6 +45,7 @@ def create_app(config: Config | None = None) -> Flask:
     app.register_blueprint(work_routes.bp)
     app.register_blueprint(admin_routes.bp)
     app.register_blueprint(api_routes.bp)
+    app.register_blueprint(maintenance_routes.bp)
 
     @app.before_request
     def _csrf_protect():

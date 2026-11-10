@@ -1,5 +1,7 @@
 # 接口与模板约定（给组员 C）
 
+> 2026-11-10 补充：9 类管理查询与写入使用[管理维护接口-给C](管理维护接口-给C.md)中的最新契约；原有 `/api/admin/employees` GET 返回格式保持兼容，并新增 POST 和详情查询。
+
 > 2026-11-07补充优先于旧表：匿名GET /menu、/menu/<product_id>、/api/menu可用；下单仍需购买账号。HTML结算字段为items_json（多商品数组）、payment_succeeded（true/false）、request_token（20—100位URLsafe），保留旧单商品兼容输入。错误时同页回填，保持实际4xx/5xx状态。API可用Idempotency-Key请求头或request_token字段，网络重试必须复用同键；冲突request_conflict=409，繁忙request_busy=503。每个响应带X-Request-ID，healthz仅返回status。C最终合并仍待外部验收。
 
 

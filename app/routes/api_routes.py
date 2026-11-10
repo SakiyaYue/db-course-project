@@ -163,13 +163,6 @@ def admin_adjust_stock():
         )
 
 
-@bp.get("/admin/employees")
-@login_required
-def admin_employees():
-    with session_scope(roles=MANAGER_ROLES) as (conn, _ctx):
-        return jsonify({"employees": admin_service.employees(conn)})
-
-
 @bp.get("/admin/members")
 @login_required
 def admin_find_member():

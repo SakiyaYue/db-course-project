@@ -12,6 +12,18 @@ import re
 
 # 接口约定（docs/phase2/06-normalization/v1.0数据库接口约定.md）第 2.3 节
 DB_ERROR_MAP: dict[int, tuple[str, str, int]] = {
+    52100: ("manager_required", "仅店长可以执行此管理操作。", 403),
+    52112: ("product_configuration_incomplete", "上架前须配置基础配方及各类型的可用规格。", 409),
+    52113: ("ingredient_unit_locked", "非零库存或已被引用的原料不能修改单位。", 409),
+    52114: ("specification_type_locked", "已使用的规格不能修改类型。", 409),
+    52115: ("recipe_required", "启用商品规格前须配置基础配方。", 409),
+    52116: ("fractional_piece_consumption", "计件原料的用量或规格组合会产生非整数消耗。", 409),
+    52117: ("remove_required", "是否移除必须明确指定。", 400),
+    52118: ("specification_must_be_disabled", "修改原料系数前须停用对应商品规格。", 409),
+    52119: ("invalid_time_range", "值班开始时间必须早于结束时间。", 400),
+    52120: ("employee_inactive", "只能为在职员工新增或修改排班。", 409),
+    52121: ("duty_overlap", "同一员工的值班区间不能重叠。", 409),
+    52122: ("product_not_found", "商品不存在，不能维护商品规格。", 409),
     52000: ("purchase_identity", "当前账号的购买身份不符合要求。", 403),
     52001: ("payment_failed", "模拟付款失败，未创建订单。", 402),
     52005: ("product_unavailable", "商品当前不可售，请刷新菜单后重试。", 409),
