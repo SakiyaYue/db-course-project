@@ -8,7 +8,7 @@
 <table class="table">
   <thead><tr><th>明细</th><th>商品</th><th>数量</th><th>单价</th><th>小计</th></tr></thead>
   <tbody>
-    {% for item in order.items %}
+    {% for item in order['items'] %}
       <tr>
         <td>{{ item.item_id }}</td>
         <td>{{ item.product_name_snapshot }}</td>
@@ -41,6 +41,14 @@
     </ul>
   </section>
 </div>
+<section class="card">
+  <h2>原料消耗快照</h2>
+  <ul class="plain">
+    {% for row in order.consumption %}
+      <li>{{ row.item_id }} · {{ row.ingredient_name }} · {{ row.amount }} {{ row.unit }}</li>
+    {% else %}<li class="muted">无</li>{% endfor %}
+  </ul>
+</section>
 {% if order.status == '排队中' %}
   <form method="post" action="{{ url_for('orders.refund', order_id=order.order_id) }}"
         onsubmit="return confirm('确认退款该订单？');">

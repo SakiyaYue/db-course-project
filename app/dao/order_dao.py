@@ -6,7 +6,7 @@ import json
 
 import pyodbc
 
-from .common import transaction_count, procedure
+from .common import transaction_count, procedure, query
 
 
 def _iso(value) -> str | None:
@@ -162,6 +162,14 @@ def get_my_member(conn: pyodbc.Connection) -> dict | None:
     finally:
         cursor.close()
     return rows[0] if rows else None
+
+
+def list_my_consumption(conn, order_id):
+    rows = query(conn, "SELECT item_id, ingredient_id, ingredient_name, unit, amount "
+                 "FROM teabar_api.vw_MyConsumption WHERE order_id = ? ORDER BY item_id, ingredient_id", order_id)
+    for row in rows:
+        row["amount"] = _money(row["amount"])
+    return rows
 
 
 def place_web_order(conn, token, digest, order_id, items, specs, addons, payment_succeeded):

@@ -178,6 +178,9 @@ def list_my_orders(conn) -> list[dict]:
 
 @service_roles("customer", "member")
 def get_order_detail(conn, order_id: str) -> dict:
+    if not isinstance(order_id, str) or not ID_PATTERN.fullmatch(order_id):
+        # Preserve the existing opaque 404 contract for buyer detail lookups.
+        raise AppError("order_not_found", "订单不存在或不属于当前账号。", 404)
     order = order_dao.get_my_order(conn, order_id)
     if order is None:
         raise AppError("order_not_found", "订单不存在或不属于当前账号。", 404)
@@ -185,6 +188,7 @@ def get_order_detail(conn, order_id: str) -> dict:
     detail["items"] = order_dao.list_my_items(conn, order_id)
     detail["specs"] = order_dao.list_my_item_specs(conn, order_id)
     detail["addons"] = order_dao.list_my_item_addons(conn, order_id)
+    detail["consumption"] = order_dao.list_my_consumption(conn, order_id)
     return detail
 
 

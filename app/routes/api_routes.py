@@ -5,7 +5,8 @@ from __future__ import annotations
 from flask import Blueprint, jsonify, request
 
 from ..security import catalog_scope, csrf_token, current_auth, login_required, session_scope
-from ..services import admin_service, menu_service, order_service, work_service
+from ..services import admin_service, menu_service, order_service, work_service, history_service
+from ..errors import AppError
 
 bp = Blueprint("api", __name__, url_prefix="/api")
 
@@ -121,17 +122,26 @@ def find_member():
 
 
 @bp.post("/work/members")
+@bp.post("/admin/members")
 @login_required
 def save_member():
     body = _body()
-    with session_scope(roles=STAFF_ROLES) as (conn, _ctx):
+    roles = MANAGER_ROLES if request.path == "/api/admin/members" else STAFF_ROLES
+    with session_scope(roles=roles) as (conn, _ctx):
         work_service.save_member(
             conn,
-            str(body.get("member_id") or "").strip(),
-            str(body.get("name") or "").strip(),
-            str(body.get("phone") or "").strip(),
+            body.get("member_id"),
+            body.get("name"),
+            body.get("phone"),
         )
     return jsonify({"saved": True})
+
+
+@bp.post("/work/orders/<order_id>/refund")
+@login_required
+def work_refund(order_id):
+    with session_scope(roles=STAFF_ROLES) as (conn, _ctx):
+        return jsonify(work_service.refund(conn, order_id))
 
 
 @bp.get("/admin/stats")
@@ -139,6 +149,22 @@ def save_member():
 def admin_stats():
     with session_scope(roles=MANAGER_ROLES) as (conn, _ctx):
         return jsonify(admin_service.stats(conn))
+
+
+@bp.get("/admin/orders")
+@login_required
+def admin_orders():
+    with session_scope(roles=MANAGER_ROLES) as (conn, _ctx):
+        if any(len(request.args.getlist(k)) != 1 for k in request.args):
+            raise AppError("invalid_filter", "查询参数不能重复。", 400)
+        return jsonify(history_service.list_orders(conn, request.args.to_dict()))
+
+
+@bp.get("/admin/orders/<order_id>")
+@login_required
+def admin_order_detail(order_id):
+    with session_scope(roles=MANAGER_ROLES) as (conn, _ctx):
+        return jsonify(history_service.get_order(conn, order_id))
 
 
 @bp.get("/admin/stock")

@@ -83,7 +83,7 @@ GET /api/admin/duty-rosters?employee_id=E001
 | 409 | `constraint_violation / duplicate_key` | 外键、CHECK 或唯一约束拒绝 |
 | 503 | `transaction_failed` | 事务冲突/锁超时，可刷新后重试 |
 
-本批范围是 9 类管理查询/写入。员工协助退款、店长历史订单接口以及 C 的管理页面仍是后续工作。
+本批范围是 9 类管理查询/写入。员工协助退款、店长历史订单等已在后续补齐，见[订单与会员补充接口](订单与会员补充接口-给C.md)。C 的最终管理页面仍待联调。
 
 ## 验证命令
 

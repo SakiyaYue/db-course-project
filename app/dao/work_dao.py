@@ -152,5 +152,6 @@ def save_member(conn: pyodbc.Connection, member_id: str, name: str, phone: str) 
     cursor = conn.cursor()
     try:
         cursor.execute("EXEC teabar_api.usp_SaveMember ?, ?, ?", member_id, name, phone)
+        _rows(cursor)
     finally:
         cursor.close()

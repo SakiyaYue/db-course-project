@@ -12,6 +12,9 @@ import re
 
 # 接口约定（docs/phase2/06-normalization/v1.0数据库接口约定.md）第 2.3 节
 DB_ERROR_MAP: dict[int, tuple[str, str, int]] = {
+    52102: ("order_out_of_scope", "订单不在当前工作查询范围。", 403),
+    52107: ("consumption_snapshot_missing", "订单缺少原料消耗快照，无法退款。", 409),
+    52108: ("refund_ingredient_missing", "退款涉及的原料记录不完整。", 409),
     52100: ("manager_required", "仅店长可以执行此管理操作。", 403),
     52112: ("product_configuration_incomplete", "上架前须配置基础配方及各类型的可用规格。", 409),
     52113: ("ingredient_unit_locked", "非零库存或已被引用的原料不能修改单位。", 409),

@@ -303,6 +303,10 @@ def main(argv: list[str] | None = None) -> int:
                 while cursor.nextset():
                     pass
         print("[扩展] public menu and idempotent order interfaces installed")
+        cursor.execute(Path(__file__).with_name("order_read_extensions.sql").read_text(encoding="utf-8"))
+        while cursor.nextset():
+            pass
+        print("[扩展] buyer-scoped consumption view installed")
 
         if args.dry_run:
             conn.rollback()

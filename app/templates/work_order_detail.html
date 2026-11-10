@@ -9,7 +9,7 @@
 <table class="table">
   <thead><tr><th>明细</th><th>商品</th><th>数量</th><th>单价</th><th>小计</th></tr></thead>
   <tbody>
-    {% for item in order.items %}
+    {% for item in order['items'] %}
       <tr>
         <td>{{ item.item_id }}</td>
         <td>{{ item.product_name_snapshot }}</td>
@@ -44,6 +44,13 @@
     </ul>
   </section>
 </div>
+{% if order.status == '排队中' %}
+  <form method="post" action="{{ url_for('work.refund', order_id=order.order_id) }}"
+        onsubmit="return confirm('确认协助退款该订单？');">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button type="submit" class="danger">协助退款</button>
+  </form>
+{% endif %}
 {% set flow = {'排队中': '制作中', '制作中': '待取餐', '待取餐': '已完成'} %}
 {% if order.status in flow %}
   <form method="post" action="{{ url_for('work.advance', order_id=order.order_id) }}">

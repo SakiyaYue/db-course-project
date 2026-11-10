@@ -59,6 +59,15 @@ def team():
     return render_template("work_team.html", rows=rows)
 
 
+@bp.post("/orders/<order_id>/refund")
+@login_required
+def refund(order_id):
+    with session_scope(roles=STAFF_ROLES) as (conn, _ctx):
+        result = work_service.refund(conn, order_id)
+    flash(f"订单 {result['order_id']} 已退款。", "success")
+    return redirect(url_for("work.order_detail", order_id=order_id))
+
+
 @bp.post("/members")
 @login_required
 def save_member():

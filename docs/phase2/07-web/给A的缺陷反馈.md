@@ -1,5 +1,7 @@
 # 给 A 的接口修正交接
 
+2026-11-10 增补：为落实 C 的“本人原料消耗快照”要求，B 新增 `database/admin/order_read_extensions.sql`，由账号初始化在同一事务中安装 `teabar_api.vw_MyConsumption`。列为 `order_id,item_id,ingredient_id,ingredient_name,unit,amount`，通过既有 `vw_MyOrderItems` 过滤当前购买者，再关联消耗快照；仅向 customer/member 授该视图 SELECT，未增加基表读取权限。原料名称仍为当前资料，消耗数量为历史快照。Test/Work 已安装，跨购买者 HTTP 和 SQL 隔离已验证；A 后续版本可整合此新增视图，不需修改原下单/退款过程。
+
 2026-11-07 本轮已用 SQL Server 只读表达式重现：BIN2 字符类 `[^a-z0-9._-]` 将 `guest_a`、`a-b` 判为非法；原 JSON 包装的ID字符类也有同样位置风险。
 
 B 的管理员初始化已在 `database/admin/web_backend_extensions.sql` 提供后置兼容补丁：
