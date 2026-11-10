@@ -1,0 +1,5 @@
+{% extends "base.html" %}{% block title %}我的会员资料 · Teabar{% endblock %}
+{% block content %}<section class="card narrow"><h1>我的会员资料</h1>{% if member %}
+<dl><dt>会员编号</dt><dd>{{ member.member_id }}</dd><dt>姓名</dt><dd>{{ member.name }}</dd><dt>手机号</dt><dd>{{ member.phone }}</dd><dt>当前积分</dt><dd class="price">{{ member.points }}</dd></dl>
+<p class="muted">订单首次完成后结算积分。资料需要更正时请联系店员，积分不可自行修改。</p>
+{% else %}<p class="empty">当前账号没有可显示的会员资料，请联系店员核对。</p>{% endif %}<a href="{{ url_for('orders.my_orders') }}">查看我的订单</a></section>{% endblock %}

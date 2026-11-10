@@ -36,6 +36,8 @@
 !/app/**/*.py
 !/app/**/*.html
 !/app/**/*.css
+!/app/static/ui.js
+!/tests/c_browser_check.cjs
 !/tests/**/*.py
 !/database/admin/*.py
 

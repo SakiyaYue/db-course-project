@@ -2,9 +2,11 @@
 {% block title %}{{ title or '出错了' }} · Teabar{% endblock %}
 {% block content %}
 <section class="card narrow">
-  <h1>{{ title or '出错了' }}</h1>
-  <p class="error">{{ message }}</p>
-  {% if detail %}<pre class="detail">{{ detail }}</pre>{% endif %}
+  <h1>{{ '服务暂时不可用' if status == 503 else (title or '操作未完成') }}</h1>
+  <p class="error" role="alert">{{ message }}</p>
+  {% if status == 503 %}<p>请稍后重试；如果刚提交了订单，请先查看“我的订单”确认结果。</p>{% endif %}
+  {% if status == 401 %}<p><a href="{{ url_for('auth.login') }}">重新登录</a></p>{% endif %}
+  <button type="button" data-back>返回上一页</button>
   <p><a href="{{ url_for('menu.index') }}">返回首页</a></p>
 </section>
 {% endblock %}

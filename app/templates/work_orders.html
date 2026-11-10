@@ -9,6 +9,7 @@
     <button type="submit">查询</button>
   </form>
 </section>
+<nav class="chips" aria-label="订单范围"><a class="chip" href="{{ url_for('work.orders') }}">全部工作订单</a><a class="chip" href="{{ url_for('work.orders', scope='today') }}">当天订单</a><a class="chip" href="{{ url_for('work.orders', scope='pending') }}">全部未完成</a></nav>
 {% if member %}
   <section class="card">
     <h2>会员 {{ member.member_id }}</h2>

@@ -46,6 +46,8 @@ def create_app(config: Config | None = None) -> Flask:
     app.register_blueprint(admin_routes.bp)
     app.register_blueprint(api_routes.bp)
     app.register_blueprint(maintenance_routes.bp)
+    from .routes import management_pages
+    app.register_blueprint(management_pages.bp)
 
     @app.before_request
     def _csrf_protect():

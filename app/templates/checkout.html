@@ -16,9 +16,10 @@
         <option value="false" {% if not payload.get('payment_succeeded', true) %}selected{% endif %}>付款失败（不创建订单）</option>
       </select>
     </label>
-    <p class="muted">每单最多 20 条明细。成交金额由数据库计算，库存以提交结果为准。</p>
+    <p id="basket-total" class="price" aria-live="polite">预计合计：￥0.00</p>
+    <p class="muted">每单最多 20 条明细，每项 1–99 杯。最终金额和库存以提交结果为准。</p>
     <button type="submit" class="primary" id="submit-order">提交订单</button>
-    <noscript><p>多商品结算需要启用 JavaScript；也可使用 JSON API。</p></noscript>
+    <noscript><p>请启用 JavaScript 后选择商品并提交订单。</p></noscript>
   </form>
 </section>
 <script id="catalog-data" type="application/json">{{ catalog | tojson }}</script>
@@ -30,6 +31,26 @@
   const basket = document.getElementById('basket');
   const add = document.getElementById('add-item');
   const form = document.getElementById('checkout-form');
+  function totals() {
+    let total = 0;
+    for (const row of basket.children) {
+      const p = catalog.products.find(p => p.product_id === row.querySelector('.basket-product').value);
+      const base = Math.round(Number(p.base_price) * 100);
+      let extra = 0;
+      for (const select of row.querySelectorAll('.basket-spec')) {
+        const spec = Object.values(p.spec_types).flat().find(s => s.spec_id === select.value);
+        if (spec) extra += Math.round(Number(spec.price_delta) * 100);
+      }
+      for (const check of row.querySelectorAll('.basket-addon:checked')) {
+        extra += Math.round(Number(catalog.addons.find(a => a.addon_id === check.value).price) * 100);
+      }
+      const quantity = Number(row.querySelector('.basket-quantity').value);
+      const amount = Number.isInteger(quantity) && quantity >= 1 && quantity <= 99 ? (base + extra) * quantity : 0;
+      row.querySelector('.line-price').textContent = `基础价 ￥${(base/100).toFixed(2)} + 规格/加料 ￥${(extra/100).toFixed(2)}；小计 ￥${(amount/100).toFixed(2)}`;
+      total += amount;
+    }
+    document.getElementById('basket-total').textContent = '预计合计：￥' + (total / 100).toFixed(2);
+  }
   function labeled(text, input, parent) {
     const label = document.createElement('label');
     label.append(document.createTextNode(text), input);
@@ -68,14 +89,15 @@
       for (const [kind, choices] of Object.entries(p.spec_types)) {
         const select = document.createElement('select');
         select.className = 'basket-spec'; select.required = true;
-        for (const choice of choices) option(select, choice.spec_id, choice.spec_name + ' +' + choice.price_delta);
+        option(select, '', '请选择' + kind);
+        for (const choice of choices) option(select, choice.spec_id, choice.spec_name + ' · 差价 ￥' + choice.price_delta);
         const match = choices.find(choice => selected.includes(choice.spec_id));
         if (match) select.value = match.spec_id;
         labeled(kind, select, specs);
       }
     }
     renderSpecs(Array.isArray(initial.specs) ? initial.specs : []);
-    product.addEventListener('change', () => renderSpecs());
+    product.addEventListener('change', () => { renderSpecs(); totals(); });
     const addons = document.createElement('fieldset');
     const caption = document.createElement('legend'); caption.textContent = '加料'; addons.append(caption);
     for (const addon of catalog.addons) {
@@ -87,12 +109,18 @@
     row.append(addons);
     const remove = document.createElement('button');
     remove.type = 'button'; remove.textContent = '移除此商品';
-    remove.addEventListener('click', () => { row.remove(); add.disabled = false; });
+    remove.addEventListener('click', () => { row.remove(); add.disabled = false; totals(); });
+    const linePrice = document.createElement('p'); linePrice.className = 'line-price'; row.append(linePrice);
     row.append(remove); basket.append(row);
+    row.addEventListener('input', totals); row.addEventListener('change', totals); totals();
     add.disabled = basket.children.length >= 20;
   }
   const savedItems = Array.isArray(saved.items) ? saved.items.slice(0, 20) : [];
   if (savedItems.length) savedItems.forEach(addRow); else addRow();
+  if (!catalog.products.length) {
+    basket.textContent = '目前暂无可售商品，请稍后再来。'; add.disabled = true;
+    document.getElementById('submit-order').hidden = true;
+  }
   add.addEventListener('click', () => addRow());
   form.addEventListener('submit', event => {
     const items = Array.from(basket.children).map(row => ({

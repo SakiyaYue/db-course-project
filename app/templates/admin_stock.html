@@ -13,7 +13,7 @@
 </table>
 <section class="card">
   <h2>补库 / 盘点</h2>
-  <form method="post" action="{{ url_for('admin.adjust_stock') }}" class="form-row">
+  <form method="post" action="{{ url_for('admin.adjust_stock') }}" class="form-row" data-confirm="确认调整库存？盘点会将库存设为填写的实际数量。">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label>原料编号 <input type="text" name="ingredient_id" value="{{ form_values.get('ingredient_id', '') }}" maxlength="10" required></label>
     <label>操作
@@ -22,7 +22,7 @@
         <option value="盘点" {% if form_values.get('operation') == '盘点' %}selected{% endif %}>盘点</option>
       </select>
     </label>
-    <label>数量 <input type="text" name="amount" value="{{ form_values.get('amount', '') }}" required></label>
+    <label>数量 <input type="number" name="amount" value="{{ form_values.get('amount', '') }}" min="0" max="99999999.99" step="0.01" required></label>
     <button type="submit" class="primary">提交</button>
   </form>
 </section>

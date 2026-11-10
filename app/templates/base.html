@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Teabar 点单系统{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script defer src="{{ url_for('static', filename='ui.js') }}"></script>
 </head>
 <body>
 <header class="topbar">
@@ -14,22 +15,26 @@
       {% if auth.app_role in ('customer', 'member') %}
         <a href="{{ url_for('menu.menu') }}">菜单</a>
         <a href="{{ url_for('orders.my_orders') }}">我的订单</a>
+        {% if auth.app_role == 'member' %}<a href="{{ url_for('management_pages.profile') }}">会员资料</a>{% endif %}
       {% elif auth.app_role in ('clerk', 'manager') %}
         <a href="{{ url_for('work.orders') }}">工作台</a>
         <a href="{{ url_for('work.team') }}">值班团队</a>
       {% endif %}
       {% if auth.app_role == 'manager' %}
+        <a href="{{ url_for('management_pages.center') }}">维护中心</a>
+        <a href="{{ url_for('management_pages.history') }}">历史订单</a>
         <a href="{{ url_for('admin.stats') }}">统计</a>
         <a href="{{ url_for('admin.stock') }}">库存</a>
         <a href="{{ url_for('admin.members') }}">会员</a>
         <a href="{{ url_for('admin.employees') }}">员工</a>
       {% endif %}
-      <span class="who">{{ auth.login_name }} · {{ auth.app_role }}</span>
+      <span class="who">{{ auth.login_name }} · {{ {'customer':'顾客','member':'会员','clerk':'店员','manager':'店长'}.get(auth.app_role, '') }}</span>
       <form method="post" action="{{ url_for('auth.logout') }}" class="inline">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <button type="submit" class="link">退出</button>
       </form>
     {% else %}
+      <a href="{{ url_for('menu.menu') }}">菜单</a>
       <a href="{{ url_for('auth.login') }}">登录</a>
     {% endif %}
   </nav>
@@ -39,13 +44,13 @@
     {% if messages %}
       <div class="flashes">
         {% for category, message in messages %}
-          <div class="flash flash-{{ category }}">{{ message }}</div>
+          <div class="flash flash-{{ category }}" role="{{ 'alert' if category in ('danger','warning') else 'status' }}">{{ message }}</div>
         {% endfor %}
       </div>
     {% endif %}
   {% endwith %}
   {% block content %}{% endblock %}
 </main>
-<footer class="footer">数据库课程设计 · Teabar 点单系统（Flask + pyodbc + SQL Server v1.0）</footer>
+<footer class="footer">Teabar · 课程演示点单系统</footer>
 </body>
 </html>

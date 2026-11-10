@@ -26,7 +26,7 @@
         {% endfor %}
       </dl>
     </article>
-  {% endfor %}
+  {% else %}<p class="empty">目前暂无可售商品，请稍后再来。</p>{% endfor %}
 </div>
 {% if catalog.addons %}
 <section class="card">

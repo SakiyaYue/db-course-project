@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}维护中心 · Teabar{% endblock %}
+{% block content %}
+<h1>店长维护中心</h1>
+<p>商品使用上下架控制，商品规格使用启用/停用，加料和原料使用可用/缺货状态。订单和成交快照不提供修改或删除。</p>
+<div class="grid">{% for resource, title in titles.items() %}
+<a class="card" href="{{ url_for('management_pages.maintain', resource=resource) }}"><h2>{{ title }}</h2><span>查看、新增和编辑 →</span></a>
+{% endfor %}</div>
+<section class="card"><h2>新商品配置顺序</h2><ol><li>创建下架商品，准备原料和规格字典。</li><li>保存基础配方，创建停用的商品规格。</li><li>配置原料系数，启用规格后上架商品。</li></ol>
+<p>配方变更会停用该商品的规格；修改系数前须停用对应规格。库存调整请前往<a href="{{ url_for('admin.stock') }}">库存</a>。</p></section>
+{% endblock %}

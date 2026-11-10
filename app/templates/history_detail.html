@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block title %}历史订单 {{ order.order_id }} · Teabar{% endblock %}
+{% block content %}<h1>历史订单 {{ order.order_id }}</h1><p>{{ order.order_time }} · ￥{{ order.total_amount }} · <span class="status">{{ order.status }}</span></p>
+<p class="muted">以下成交记录只读；价格和原料用量按下单时保存的快照展示。</p>
+{% for key,title,columns in [
+('items','商品明细',[('item_id','明细'),('product_name_snapshot','商品'),('quantity','数量'),('base_price_snapshot','基础价'),('unit_price','成交单价'),('sub_amount','小计')]),
+('specs','规格',[('item_id','明细'),('spec_type','类型'),('spec_name_snapshot','规格'),('price_delta_snapshot','差价')]),
+('addons','加料',[('item_id','明细'),('addon_name_snapshot','加料'),('price_snapshot','价格')]),
+('consumption','原料消耗',[('item_id','明细'),('ingredient_name','原料'),('unit','单位'),('amount','消耗量')])] %}
+<h2>{{ title }}</h2>{% if order[key] %}<div class="table-scroll"><table class="table"><thead><tr>{% for field,label in columns %}<th>{{ label }}</th>{% endfor %}</tr></thead><tbody>{% for row in order[key] %}<tr>{% for field,label in columns %}<td>{{ row[field] }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div>{% else %}<p class="empty">无{{ title }}记录。</p>{% endif %}{% endfor %}
+<a href="{{ url_for('management_pages.history') }}">返回历史订单</a>{% endblock %}

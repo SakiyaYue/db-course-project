@@ -108,12 +108,13 @@ def login_required(view):
         except AuthRequired:
             if request.path.startswith("/api/"):
                 return jsonify({"error": {"code": "auth_required", "message": "请先登录。"}}), 401
-            flash("请先登录。", "warning")
+            flash("请先登录；如果刚才已登录，会话可能已失效。", "warning")
             return redirect(url_for("auth.login", next=request.full_path.rstrip("?")))
         except Forbidden:
             if request.path.startswith("/api/"):
                 return jsonify({"error": {"code": "forbidden", "message": "当前角色无权执行此操作。"}}), 403
-            return redirect(url_for("menu.index"))
+            from flask import render_template
+            return render_template("error.html", message="当前角色无权访问此页面或执行此操作。", status=403), 403
 
     return wrapper
 

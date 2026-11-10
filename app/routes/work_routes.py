@@ -25,6 +25,12 @@ def orders():
                 member = work_service.find_member(conn, phone)
             except AppError as exc:
                 flash(exc.message, "warning")
+    from datetime import date
+    mode = request.args.get("scope", "all")
+    if mode == "today":
+        orders = [o for o in orders if o["order_time"][:10] == date.today().isoformat()]
+    elif mode == "pending":
+        orders = [o for o in orders if o["status"] in ("排队中", "制作中", "待取餐")]
     return render_template("work_orders.html", orders=orders, member=member, role=ctx["app_role"],
                            phone=phone)
 
@@ -48,7 +54,7 @@ def advance(order_id: str):
             flash(exc.message, "danger")
             return render_template("work_order_detail.html", order=work_service.get_order_detail(conn, order_id)), exc.status
     flash(f"订单 {result['order_id']} 已流转到 {result['status']}。", "success")
-    return redirect(url_for("work.order_detail", order_id=order_id))
+    return redirect(url_for("work.orders"))
 
 
 @bp.get("/team")
@@ -65,7 +71,7 @@ def refund(order_id):
     with session_scope(roles=STAFF_ROLES) as (conn, _ctx):
         result = work_service.refund(conn, order_id)
     flash(f"订单 {result['order_id']} 已退款。", "success")
-    return redirect(url_for("work.order_detail", order_id=order_id))
+    return redirect(url_for("work.orders"))
 
 
 @bp.post("/members")

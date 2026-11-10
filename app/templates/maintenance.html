@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}维护 · Teabar{% endblock %}
+{% block content %}
+<div class="page-head"><h1>{{ title }}维护</h1><a href="{{ url_for('management_pages.center') }}">维护中心</a></div>
+<nav class="chips" aria-label="维护分类">{% for r, label in titles.items() %}<a class="chip" href="{{ url_for('management_pages.maintain', resource=r) }}">{{ label }}</a>{% endfor %}</nav>
+{% if resource == 'recipes' %}<p class="flash flash-warning">保存或移除配方会停用该商品全部规格。移除原料还会移除对应的系数规则。</p>{% endif %}
+{% if resource == 'specification-ingredients' %}<p class="flash flash-warning">修改或移除系数前，请先停用对应商品规格。计件原料不能产生小数用量。</p>{% endif %}
+{% if resource == 'employees' %}<p class="muted">修改岗位和离职资料不会自动变更登录账号权限，请同时安排账号维护。</p>{% endif %}
+<section class="card"><h2>{{ '编辑记录' if editing else '新增记录' }}</h2>
+<form method="post" data-confirm="确认保存这条资料？" class="form-grid">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="editing" value="{{ '1' if editing else '0' }}">
+{% for f in fields %}<label>{{ f.label }}{% if f.required %} <span aria-hidden="true">*</span>{% endif %}
+{% if f.options %}<select name="{{ f.name }}" required>{% for option in f.options %}<option {% if values.get(f.name) == option %}selected{% endif %}>{{ option }}</option>{% endfor %}</select>
+{% else %}<input name="{{ f.name }}" type="{{ f.type }}" value="{{ values.get(f.name) or '' }}"
+{% if f.required %}required{% endif %} {% if editing and f.name in keys %}readonly{% endif %}
+{% if f.type == 'text' %}maxlength="{{ f.maxlength }}"{% endif %}
+{% if f.pattern %}pattern="{{ f.pattern }}"{% endif %}
+{% if f.step is defined %}step="{{ f.step }}"{% endif %}{% if f.min is defined %} min="{{ f.min }}" max="{{ f.max }}"{% endif %}>
+{% endif %}</label>{% endfor %}
+<div class="actions"><button class="primary" type="submit">保存{{ title }}</button><a href="{{ url_for('management_pages.maintain', resource=resource) }}">清空 / 新增</a></div></form></section>
+<section><h2>全部记录（含非可用状态）</h2>
+{% if rows %}<div class="table-scroll"><table class="table"><thead><tr>{% for f in fields %}<th>{{ f.label }}</th>{% endfor %}{% if resource == 'ingredients' %}<th>库存</th>{% endif %}<th>操作</th></tr></thead><tbody>
+{% for row in rows %}<tr>{% for f in fields %}<td>{% if f.name == 'status' %}<span class="status">{{ row[f.name] }}</span>{% else %}{{ row[f.name] if row[f.name] is not none else '—' }}{% endif %}</td>{% endfor %}
+{% if resource == 'ingredients' %}<td>{{ row.stock }}</td>{% endif %}<td>
+{% set parts = namespace(values=[]) %}{% for k in keys %}{% set parts.values = parts.values + [row[k]] %}{% endfor %}
+<a href="{{ url_for('management_pages.maintain', resource=resource, key=parts.values|join('/')) }}">编辑</a>
+{% if removable %}<form method="post" class="inline" data-confirm="确认移除这条配置？相关规则可能需要重新检查。">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="operation" value="remove">
+{% for k in keys %}<input type="hidden" name="{{ k }}" value="{{ row[k] }}">{% endfor %}<button class="link danger" type="submit">移除</button></form>{% endif %}
+</td></tr>{% endfor %}</tbody></table></div>{% else %}<p class="empty">暂无记录，可以使用上方表单新增。</p>{% endif %}</section>
+{% endblock %}
